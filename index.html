@@ -1,50 +1,11 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Life City – Departments Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <meta name="description" content="Single-file dashboard listing all Life City departments with search and tags." />
-  <style>
-    .card:hover { transform: translateY(-2px); }
-  </style>
-</head>
-<body class="bg-slate-50 text-slate-900">
-  <header class="px-6 py-6 bg-white shadow">
-    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
-      <h1 class="text-2xl md:text-3xl font-bold">Life City – Departments Dashboard</h1>
-      <a href="#" class="text-sm underline">v1.0</a>
-    </div>
-  </header>
+# If index.html is missing (e.g., kernel reset), recreate it with the previous content and then wire links.
 
-  <main class="max-w-6xl mx-auto px-6 py-8">
-    <section class="mb-6 grid md:grid-cols-3 gap-4 items-end">
-      <div class="md:col-span-2">
-        <label class="block text-sm font-medium mb-2">Search departments</label>
-        <input id="search" type="text" placeholder="Type to filter…"
-          class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500" />
-      </div>
-      <div class="">
-        <label class="block text-sm font-medium mb-2">View</label>
-        <select id="sort" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500">
-          <option value="default">By number</option>
-          <option value="alpha">Alphabetical</option>
-        </select>
-      </div>
-    </section>
+from datetime import datetime
+import os, zipfile, pandas as pd, re
 
-    <section id="grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <!-- Cards injected by JS -->
-    </section>
+now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    <footer class="mt-10 text-center text-xs text-slate-500">
-      <p>Single-file static page – perfect for GitHub Pages.</p>
-    </footer>
-  </main>
-
-  <script>
-    const departments = [
+departments = [
 "1. Diplomacy",
 "02. Business",
 "03. Major Projects",
@@ -74,45 +35,129 @@
 "27. Utilities",
 "28. Public Works",
 "29. Environmental & Sustainability"
-];
+]
+
+links = [
+    "https://onedrive.live.com/?id=A0E5D4FE7220C501%21seee7328e7e9c4f578275995dc4435cac&cid=a0e5d4fe7220c501&ithint=folder&migratedtospo=true",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EnbvFoCubAFAmG6BycYyoAgB8aFRAQe_PJnIV5DTEX4uQw?e=ZX6e9p",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/Egy4JTjVZB9Hj_fHV7WZI7wBS8gHOM4JCibmCIxUNXg3JA?e=PXsh3L",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EvDHgj4UV-1AuWKV5zz3rvcBIHtiG880gsP5yLSF6WYIrg?e=I78DJN",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/Eg2wbt5jdbVLiHPI_-9b_2ABm5oBWIrC-y2yBd8qFfgj-Q?e=GxQpNJ",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/Evxve7efbGNMrqOTk-cOXwEB5deNiFdZgW2bwfcWUtQkAw?e=uIugW5",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EiQBxfpY5CFFhIAu2bJuBKkBsJTsWqyxd-drZ0H848l7dQ?e=lhg9Bz",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/ElHiLq5_CmhFi65PdCNgBhoBkdCbO6dydhFUjYg0wpXLSw?e=3QAUr8",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/Evlz2w0hdHZEkhvu6pp49tsB5XxNFS_Cm5Py1mj-ZGna4Q?e=PVLdIf",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EnoSW_PPcdJMqcJdueYl_bIBHCqPEGWH-E2Hv8hTdLOsww?e=Yhq7uh",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EvjRP4Cp5vdOtjuDduOTnY4BqqdZS89xlRNOW6EksgKTyg?e=sQNZcc",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EtUoQswyBFVKpJZZOdhFhbgBTxeAVCpPR-qlECUP49uCBQ?e=hbSTH9",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EjVdjKqejkZNnmslISEuyrYBu0yYvSBauQMOjDForXt1rQ?e=dSEbTf",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EgnvLw10WE5HiKn43P__UgEBI99utn3D4olx_VIDnOGWIA?e=jFXhvQ",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/Ek3hIqqFIn9IidmwCDErKfUBtgyu0F-yXs54_yhINHe11w?e=1ylM7D",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/En55UIzWlHdMq_kPMnxb27wBMz0IlWLYhc1znC48EnQz2A?e=tAIbjq",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EtJyo9UnN3RHhmIEw0j-CxcBJRD3EOF8gIWunZUUvFgkBQ?e=Q2v5aD",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/ErCNHmpsf0tFo9KeXBwLcU0BJRR3SBGYFD9gnxKsOmURdA?e=6arJ12",
+    "https://onedrive.live.com/?id=A0E5D4FE7220C501%21s905ba87005bd4611a9409bbdf53015c8&cid=a0e5d4fe7220c501&ithint=folder&migratedtospo=true",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/El-2As-gxMhIoewcdhQQDD8BluJtLj3N-FuQcQNdNwfKyg?e=F5UXiO",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/Emh3awOG_65ApeiaLUO9dwoBDd1o1Padh8Kjrs2LyXanRw?e=ih2Cd1",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/Et_-gWUjPp1BmRtPUKWHMRYBYv5sHZidyXS2A4d84IzXqg?e=FNehho",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EtNESq1VQ0REpwMmryy95QUBK5ArjstMcCsBo3uye5Zevw?e=qWdhiD",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/Eg22sU1wlKxClu1md6813G8BfrnP7r5jBhXEvpEKuQ4Q2Q?e=7m5gSa",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EsqJC4IoPSBDipGf1-XTCwEBQNACPzKcYYnJC8CwXaL3ww?e=jKaHvq",
+    "https://onedrive.live.com/?id=A0E5D4FE7220C501%21s5b8f60feb29940248fd4ed74dfb39f93&cid=a0e5d4fe7220c501&ithint=folder&migratedtospo=true",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EgSt-q_XwQdDtkQtojctRqYB3cqlca5DcT6EbyNg3ZrbWg?e=jdK6Wa",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/Ehw5-wSQ0ntBnlBic-3yCS0B6IJkX3MAxFBT4fD-9D6OXQ?e=caLC7n",
+    "https://1drv.ms/f/c/a0e5d4fe7220c501/EjNKI1nMXIFFrezPFGAD5hEBfb_GREXd5LK9odSWAGg9yQ?e=zLqRy3",
+]
+
+html = f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Life City – Departments Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="description" content="Single-file dashboard listing all Life City departments with search and tags." />
+  <style>
+    .card:hover {{ transform: translateY(-2px); }}
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <header class="px-6 py-6 bg-white shadow">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
+      <h1 class="text-2xl md:text-3xl font-bold">Life City – Departments Dashboard</h1>
+      <a href="#" class="text-sm underline">v1.1</a>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-8">
+    <section class="mb-6 grid md:grid-cols-3 gap-4 items-end">
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium mb-2">Search departments</label>
+        <input id="search" type="text" placeholder="Type to filter…"
+          class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+      </div>
+      <div class="">
+        <label class="block text-sm font-medium mb-2">View</label>
+        <select id="sort" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          <option value="default">By number</option>
+          <option value="alpha">Alphabetical</option>
+        </select>
+      </div>
+    </section>
+
+    <section id="grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Cards injected by JS -->
+    </section>
+
+    <footer class="mt-10 text-center text-xs text-slate-500">
+      <p>Last updated: {now}</p>
+      <p>Single-file static page – perfect for GitHub Pages.</p>
+    </footer>
+  </main>
+
+  <script>
+    const urls = {links};
+    const departments = {departments};
 
     const grid = document.getElementById('grid');
     const search = document.getElementById('search');
     const sortSel = document.getElementById('sort');
 
-    function normalizeLabel(label) { return label.replace(/^\d+\.\s*/, '').trim(); }
+    function normalizeLabel(label) {{ return label.replace(/^\\d+\\.\\s*/, '').trim(); }}
 
-    function render(list) {
+    function render(list) {{
       grid.innerHTML = '';
-      list.forEach((label, idx) => {
+      list.forEach((label, idx) => {{
         const name = normalizeLabel(label);
         const id = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
         const el = document.createElement('a');
-        el.href = '#'; // placeholder – map to repo pages later if needed
+        el.href = (urls[idx] || '#');
+        el.target = '_blank';
+        el.rel = 'noopener';
         el.className = 'card block rounded-2xl border border-slate-200 bg-white p-5 shadow hover:shadow-md transition';
         el.innerHTML = `
-          <div class="text-xs uppercase tracking-wide text-slate-500">${label.split(' ')[0]}</div>
-          <div class="mt-1 text-lg font-semibold">${name}</div>
-          <div class="mt-2 text-sm text-slate-600">Click to open (${id}).</div>
+          <div class="text-xs uppercase tracking-wide text-slate-500">${{label.split(' ')[0]}}</div>
+          <div class="mt-1 text-lg font-semibold">${{name}}</div>
+          <div class="mt-2 text-sm text-slate-600">Open in OneDrive</div>
           <div class="mt-3 flex gap-2 flex-wrap">
             <span class="text-[11px] px-2 py-1 rounded-full border border-slate-200">Dept</span>
             <span class="text-[11px] px-2 py-1 rounded-full border border-slate-200">Life City</span>
           </div>
         `;
         grid.appendChild(el);
-      });
-    }
+      }});
+    }}
 
-    function filterAndSort() {
+    function filterAndSort() {{
       const q = search.value.toLowerCase().trim();
       let list = departments.filter(d => normalizeLabel(d).toLowerCase().includes(q));
-      if (sortSel.value === 'alpha') {
+      if (sortSel.value === 'alpha') {{
         list = [...list].sort((a,b) => normalizeLabel(a).localeCompare(normalizeLabel(b)));
-      } else {
+      }} else {{
         list = [...list];
-      }
+      }}
       render(list);
-    }
+    }}
 
     search.addEventListener('input', filterAndSort);
     sortSel.addEventListener('change', filterAndSort);
@@ -121,3 +166,61 @@
   </script>
 </body>
 </html>
+"""
+
+html_path = "/mnt/data/index.html"
+with open(html_path, "w", encoding="utf-8") as f:
+    f.write(html)
+
+zip_path = "/mnt/data/life_city_dashboard_linked.zip"
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+    zf.write(html_path, arcname="index.html")
+
+# Log and Excel update
+log_path = "/mnt/data/Life_City_Monthly_Log.txt"
+entry = f"{now} — Controlled Documents/Communications: Wired department cards to OneDrive links in dashboard (index.html).\n"
+if os.path.exists(log_path):
+    with open(log_path, "a", encoding="utf-8") as f:
+        f.write(entry)
+else:
+    with open(log_path, "w", encoding="utf-8") as f:
+        f.write("Life City – Monthly Log\n" + entry)
+
+excel_path = "/mnt/data/Life_City_Digital_HQ.xlsx"
+row = {
+    "Timestamp": now,
+    "Department": "Controlled Documents; Communications",
+    "Update": "Wired dashboard department cards to provided OneDrive links.",
+    "Connected Departments": "Public Works; Housing & Urban Development; Security; Finance; Archives & Museum",
+    "Notes": "index.html v1.1 with OneDrive links + zip packaged."
+}
+
+if os.path.exists(excel_path):
+    try:
+        xls = pd.ExcelFile(excel_path)
+        if "Updates" in xls.sheet_names:
+            df_existing = pd.read_excel(excel_path, sheet_name="Updates")
+            df_new = pd.concat([df_existing, pd.DataFrame([row])], ignore_index=True)
+        else:
+            df_new = pd.DataFrame([row])
+    except Exception:
+        df_new = pd.DataFrame([row])
+else:
+    df_new = pd.DataFrame([row])
+
+try:
+    if os.path.exists(excel_path):
+        with pd.ExcelWriter(excel_path, mode="a", if_sheet_exists="replace", engine="openpyxl") as writer:
+            xls = pd.ExcelFile(excel_path)
+            for sheet in xls.sheet_names:
+                if sheet != "Updates":
+                    pd.read_excel(excel_path, sheet_name=sheet).to_excel(writer, sheet_name=sheet, index=False)
+            df_new.to_excel(writer, sheet_name="Updates", index=False)
+    else:
+        with pd.ExcelWriter(excel_path, engine="openpyxl") as writer:
+            df_new.to_excel(writer, sheet_name="Updates", index=False)
+    status = "OK"
+except Exception as e:
+    status = f"Excel update failed: {e}"
+
+(status, html_path, zip_path)
