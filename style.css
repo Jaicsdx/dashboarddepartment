@@ -1,11 +1,6 @@
 
 :root{
-  --bg:#f1f5f9; /* slate-100 */
-  --panel:#ffffff;
-  --border:#e2e8f0; /* slate-200 */
-  --text:#0f172a; /* slate-900 */
-  --muted:#64748b; /* slate-500/600 */
-  --accent:#b45309; /* amber-700 */
+  --bg:#f1f5f9; --panel:#ffffff; --border:#e2e8f0; --text:#0f172a; --muted:#64748b; --accent:#b45309;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial}
@@ -20,7 +15,8 @@ a{text-decoration:none;color:inherit}
 @media(min-width:1024px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:transform .12s ease, box-shadow .12s ease}
 .card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.08)}
-.icon-badge{width:60px;height:60px;border-radius:999px;border:1px solid var(--border);display:grid;place-items:center;background:#fff;color:#334155;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.icon-badge{width:60px;height:60px;border-radius:999px;display:grid;place-items:center;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.icon-badge img{width:28px;height:28px;display:block;filter: drop-shadow(0 0 0 rgba(0,0,0,0));}
 .card-top{display:flex;gap:12px;align-items:center}
 .card-num{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#64748b}
 .card-name{font-size:18px;font-weight:700}
