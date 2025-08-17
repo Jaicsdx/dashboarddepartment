@@ -1,156 +1,183 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Life City – Departments Dashboard</title>
-  <link rel="stylesheet" href="style.css"/>
+// ---------------- Dashboard data ----------------
+const departments = [
+  "1. Diplomacy","02. Business","03. Major Projects","04. Controlled Documents","05. Anju Wifey",
+  "06. Health, Fitness & Emergency","07. Benefits, Insurance & Taxation","08. Family Safety & Intelligence","09. Security","10. Law",
+  "11. Asset Management & Properties","12. Finance","13. Social Committee & Family","14. Dreams & Exploration","15. Philanthropy",
+  "16. Art, Film, Music & Culture","17. Food","18. Immigration","19. Procurement Department","20. Daily Logs & Planner",
+  "21. Automobile & Transportation","22. Science Division","23. Employment Resources","24. Archives & Museum",
+  "25. Housing & Urban Development","26. Communications","27. Utilities","28. Public Works","29. Environmental & Sustainability"
+];
 
-  <!-- Ticker styling -->
-  <style>
-    .ticker {
-      --height: 44px;
-      --gap: 28px;
-      --speed: 40s;   /* slower scroll = bigger number */
-      --bg: #0b1220;
-      --fg: #fff;
-      --accent: #ffd166;
+// ✅ OneDrive links mapped 1–29 in the same order as `departments`
+const urls = [
+  "https://onedrive.live.com/?id=A0E5D4FE7220C501%21seee7328e7e9c4f578275995dc4435cac&cid=a0e5d4fe7220c501&ithint=folder&migratedtospo=true", // 1. Diplomacy
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EnbvFoCubAFAmG6BycYyoAgB8aFRAQe_PJnIV5DTEX4uQw?e=ZX6e9p", // 02. Business
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/Egy4JTjVZB9Hj_fHV7WZI7wBS8gHOM4JCibmCIxUNXg3JA?e=PXsh3L", // 03. Major Projects
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EvDHgj4UV-1AuWKV5zz3rvcBIHtiG880gsP5yLSF6WYIrg?e=I78DJN", // 04. Controlled Documents
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/Eg2wbt5jdbVLiHPI_-9b_2ABm5oBWIrC-y2yBd8qFfgj-Q?e=GxQpNJ", // 05. Anju Wifey
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/Evxve7efbGNMrqOTk-cOXwEB5deNiFdZgW2bwfcWUtQkAw?e=uIugW5", // 06. Health, Fitness & Emergency
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EiQBxfpY5CFFhIAu2bJuBKkBsJTsWqyxd-drZ0H848l7dQ?e=lhg9Bz", // 07. Benefits, Insurance & Taxation
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/ElHiLq5_CmhFi65PdCNgBhoBkdCbO6dydhFUjYg0wpXLSw?e=3QAUr8", // 08. Family Safety & Intelligence
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/Evlz2w0hdHZEkhvu6pp49tsB5XxNFS_Cm5Py1mj-ZGna4Q?e=PVLdIf", // 09. Security
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EnoSW_PPcdJMqcJdueYl_bIBHCqPEGWH-E2Hv8hTdLOsww?e=Yhq7uh", // 10. Law
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EvjRP4Cp5vdOtjuDduOTnY4BqqdZS89xlRNOW6EksgKTyg?e=sQNZcc", // 11. Asset Management & Properties
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EtUoQswyBFVKpJZZOdhFhbgBTxeAVCpPR-qlECUP49uCBQ?e=hbSTH9", // 12. Finance
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EjVdjKqejkZNnmslISEuyrYBu0yYvSBauQMOjDForXt1rQ?e=dSEbTf", // 13. Social Committee & Family
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EgnvLw10WE5HiKn43P__UgEBI99utn3D4olx_VIDnOGWIA?e=jFXhvQ", // 14. Dreams & Exploration
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/Ek3hIqqFIn9IidmwCDErKfUBtgyu0F-yXs54_yhINHe11w?e=1ylM7D", // 15. Philanthropy
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/En55UIzWlHdMq_kPMnxb27wBMz0IlWLYhc1znC48EnQz2A?e=tAIbjq", // 16. Art, Film, Music & Culture
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EtJyo9UnN3RHhmIEw0j-CxcBJRD3EOF8gIWunZUUvFgkBQ?e=Q2v5aD", // 17. Food
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/ErCNHmpsf0tFo9KeXBwLcU0BJRR3SBGYFD9gnxKsOmURdA?e=6arJ12", // 18. Immigration
+  "https://onedrive.live.com/?id=A0E5D4FE7220C501%21s905ba87005bd4611a9409bbdf53015c8&cid=a0e5d4fe7220c501&ithint=folder&migratedtospo=true", // 19. Procurement Department
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/El-2As-gxMhIoewcdhQQDD8BluJtLj3N-FuQcQNdNwfKyg?e=F5UXiO", // 20. Daily Logs & Planner
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/Emh3awOG_65ApeiaLUO9dwoBDd1o1Padh8Kjrs2LyXanRw?e=ih2Cd1", // 21. Automobile & Transportation
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/Et_-gWUjPp1BmRtPUKWHMRYBYv5sHZidyXS2A4d84IzXqg?e=FNehho", // 22. Science Division
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EtNESq1VQ0REpwMmryy95QUBK5ArjstMcCsBo3uye5Zevw?e=qWdhiD", // 23. Employment Resources
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/Eg22sU1wlKxClu1md6813G8BfrnP7r5jBhXEvpEKuQ4Q2Q?e=7m5gSa", // 24. Archives & Museum
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EsqJC4IoPSBDipGf1-XTCwEBQNACPzKcYYnJC8CwXaL3ww?e=jKaHvq", // 25. Housing & Urban Development
+  "https://onedrive.live.com/?id=A0E5D4FE7220C501%21s5b8f60feb29940248fd4ed74dfb39f93&cid=a0e5d4fe7220c501&ithint=folder&migratedtospo=true", // 26. Communications
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EgSt-q_XwQdDtkQtojctRqYB3cqlca5DcT6EbyNg3ZrbWg?e=jdK6Wa", // 27. Utilities
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/Ehw5-wSQ0ntBnlBic-3yCS0B6IJkX3MAxFBT4fD-9D6OXQ?e=caLC7n", // 28. Public Works
+  "https://1drv.ms/f/c/a0e5d4fe7220c501/EjNKI1nMXIFFrezPFGAD5hEBfb_GREXd5LK9odSWAGg9yQ?e=zLqRy3"  // 29. Environmental & Sustainability
+];
 
-      position: relative;
-      height: var(--height);
-      overflow: hidden;
-      background: var(--bg);
-      color: var(--fg);
-      border-top: 1px solid rgba(255,255,255,.1);
-      border-bottom: 1px solid rgba(255,255,255,.1);
-    }
-    .ticker__mask {
-      position: absolute; inset: 0;
-      pointer-events: none;
-      -webkit-mask: linear-gradient(90deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%);
-              mask: linear-gradient(90deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%);
-    }
-    .ticker__viewport {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      gap: var(--gap);
-      width: max-content;
-      animation: marquee var(--speed) linear infinite;
-      animation-direction: reverse; /* left → right */
-      will-change: transform;
-    }
-    .ticker:hover .ticker__viewport { animation-play-state: paused; }
-    .ticker__item {
-      display: inline-flex; align-items: center; gap: 10px; white-space: nowrap;
-      font: 600 14px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
-      padding-inline: 2px;
-    }
-    .ticker__bullet {
-      width: 8px; height: 8px; border-radius: 999px; background: var(--accent);
-      box-shadow: 0 0 0 2px rgba(255,255,255,.15) inset;
-    }
-    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+const iconUrls = [
+  "https://api.iconify.design/tabler/handshake.svg?color=white","https://api.iconify.design/tabler/briefcase.svg?color=white","https://api.iconify.design/tabler/building-skyscraper.svg?color=white","https://api.iconify.design/tabler/files.svg?color=white","https://api.iconify.design/tabler/heart.svg?color=white","https://api.iconify.design/tabler/medical-cross.svg?color=white","https://api.iconify.design/tabler/receipt-2.svg?color=white","https://api.iconify.design/tabler/shield-lock.svg?color=white","https://api.iconify.design/tabler/lock.svg?color=white","https://api.iconify.design/tabler/scale.svg?color=white","https://api.iconify.design/tabler/home.svg?color=white","https://api.iconify.design/tabler/currency-dollar.svg?color=white","https://api.iconify.design/tabler/users.svg?color=white","https://api.iconify.design/tabler/rocket.svg?color=white","https://api.iconify.design/tabler/heart-handshake.svg?color=white","https://api.iconify.design/tabler/palette.svg?color=white","https://api.iconify.design/tabler/utensils.svg?color=white","https://api.iconify.design/tabler/id.svg?color=white","https://api.iconify.design/tabler/shopping-cart.svg?color=white","https://api.iconify.design/tabler/calendar.svg?color=white","https://api.iconify.design/tabler/car.svg?color=white","https://api.iconify.design/tabler/flask-2.svg?color=white","https://api.iconify.design/tabler/toolbox.svg?color=white","https://api.iconify.design/tabler/building-bank.svg?color=white","https://api.iconify.design/tabler/building.svg?color=white","https://api.iconify.design/tabler/messages.svg?color=white","https://api.iconify.design/tabler/plug.svg?color=white","https://api.iconify.design/tabler/tools.svg?color=white","https://api.iconify.design/tabler/leaf.svg?color=white"
+];
 
-    /* Input row stays compact so header never stretches */
-    .highlights-editor{ display:flex; gap:8px; align-items:flex-start; }
-    #newNote{
-      flex:1; font-size:14px; padding:6px; border-radius:6px; border:1px solid #cbd5e1;
-      resize:vertical; max-height:96px;
+const palette = ["#22c55e","#38bdf8","#f59e0b","#60a5fa","#0284c7","#fbbf24","#94a3b8","#f59e0b","#10b981","#ef4444","#3b82f6","#22c55e","#06b6d4","#f97316","#f43f5e","#8b5cf6","#fb7185","#0ea5e9","#16a34a","#f59e0b","#60a5fa","#06b6d4","#64748b","#ea580c","#22c55e","#f97316","#0891b2","#475569","#84cc16"];
+const FALLBACK_ICON = "https://api.iconify.design/tabler/folder.svg?color=white";
+
+// ---------------- Helpers ----------------
+function normalizeLabel(label) { return label.replace(/^\d+\.\s*/, '').trim(); }
+function loadFavs() { try { return new Set(JSON.parse(localStorage.getItem('favorites')||'[]')); } catch { return new Set(); } }
+function saveFavs(f) { localStorage.setItem('favorites', JSON.stringify([...f])); }
+
+// ---------------- Ticker (input only, persists) ----------------
+document.addEventListener('DOMContentLoaded', () => {
+  const STORAGE_KEY = "lifeCity.tickerNotes";
+  const track = document.getElementById('ticker-track');
+  const addBtn = document.getElementById('addNoteBtn');
+  const textarea = document.getElementById('newNote');
+  const clearAllBtn = document.getElementById('clearAll');
+
+  const escapeHTML = (s) => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const loadNotes = () => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { return []; } };
+  const saveNotes = (arr) => localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+
+  function renderTicker(arr) {
+    const items = arr ?? loadNotes();
+    track.innerHTML = "";
+    const frag = (data) => {
+      const f = document.createDocumentFragment();
+      data.forEach(text => {
+        const item = document.createElement('div');
+        item.className = 'ticker__item';
+        item.innerHTML = `<span class="ticker__bullet"></span><span>${escapeHTML(text)}</span>`;
+        f.appendChild(item);
+      });
+      return f;
+    };
+    track.appendChild(frag(items));
+    track.appendChild(frag(items));
+  }
+
+  if (loadNotes().length === 0) {
+    saveNotes([
+      "Loop recording: new clip every 5 minutes",
+      "Auto-cleanup respects storage cap",
+      "Use Guided Access to keep app foregrounded",
+      "Mount your phone safely & legally"
+    ]);
+  }
+  renderTicker();
+
+  addBtn?.addEventListener('click', () => {
+    const txt = textarea?.value.trim();
+    if (!txt) return;
+    const notes = loadNotes(); notes.push(txt); saveNotes(notes);
+    textarea.value = ""; renderTicker(notes);
+  });
+
+  clearAllBtn?.addEventListener('click', () => { saveNotes([]); renderTicker([]); });
+});
+
+// ---------------- Departments grid ----------------
+function render(list) {
+  const grid = document.getElementById('grid');
+  const favs = loadFavs();
+  const favList = list.filter(l => favs.has(l));
+  const otherList = list.filter(l => !favs.has(l));
+  const finalList = [...favList, ...otherList];
+  grid.innerHTML = '';
+
+  finalList.forEach(label => {
+    const name = normalizeLabel(label);
+    const idx = departments.indexOf(label);
+    const url = urls[idx];
+
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = url || '#';
+    a.target = '_blank';
+    a.rel = 'noopener';
+
+    if (!url) {
+      a.addEventListener('click', (e) => e.preventDefault());
+      a.title = "No link yet";
     }
-    .btn{
-      padding:6px 12px; font-size:14px; border-radius:6px; border:none; color:#fff; cursor:pointer;
-    }
-    .btn-add{ background:#38bdf8; }
-    .btn-clear{ background:#64748b; }
-  </style>
-</head>
-<body>
-  <div class="layout">
-    <aside class="sidebar">
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;">
-        <div style="font-size:26px">🏙️</div>
-        <div style="font-weight:800;font-size:18px">Dashboard</div>
-      </div>
 
-      <div class="panel" style="background:transparent;border-color:transparent;color:#fff">
-        <div style="opacity:.9;font-size:12px;margin:8px 12px 4px;">Finance & Tracking</div>
-        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1zOiW_1e00csF1FHKZX6h_DaVxrLKe3unuHLZwWRUJNw/edit?gid=401075469#gid=401075469">📊 Tracker</a>
-        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/checkboxmenu/"> 📊 QUICK TRACKER ENTRY</a>
-        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1eWBZQZsQap3BABUNPdKvvd6HzAnC3RZvrd1N6jPQGsY/edit?gid=211823180#gid=211823180">💰 Payments Forecast</a>
-        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1Aj38AwzHZIHP0zVye9Z0HE9BXxiMa1DSO8OoUWCX8Kg/edit?gid=17854660#gid=17854660">🏦 Fixed Deposit</a>
-        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1knQ5kQx8u_GlhtjgFVDHjNIOYA6bKM6K3v61eG1Sy3I/edit?gid=0#gid=0">🏠 Mortgage</a>
-        <a target="_blank" rel="noopener" href="https://calendar.google.com/calendar/u/0/r">📅 Calendar</a>
-        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/incomepersecond/">📐e = ∑∞ⁿ⁼⁰ ¹ₙ🤓 Income Calculator per second</a>
-      </div>
+    const star = document.createElement('span');
+    star.className = 'star' + (favs.has(label) ? ' active' : '');
+    star.title = favs.has(label) ? 'Unpin' : 'Pin to top';
+    star.textContent = '★';
+    star.addEventListener('click', (ev) => {
+      ev.preventDefault(); ev.stopPropagation();
+      const f = loadFavs();
+      if (f.has(label)) f.delete(label); else f.add(label);
+      saveFavs(f); render(getFilteredSorted());
+    });
 
-      <div class="panel" style="background:transparent;border-color:transparent;color:#fff">
-        <div style="opacity:.9;font-size:12px;margin:8px 12px 4px;">Navigation</div>
-        <a href="#top">🏠 Home</a>
-        <a href="#settings">⚙️ Settings</a>
-        <a href="#support">🆘 Support</a>
-      </div>
-    </aside>
+    const iconWrap = document.createElement('div');
+    iconWrap.className = 'icon-badge';
+    iconWrap.style.background = palette[idx % palette.length];
+    const img = document.createElement('img');
+    img.src = iconUrls[idx] || FALLBACK_ICON;
+    img.alt = name + ' icon';
+    img.onerror = () => { img.src = FALLBACK_ICON; img.onerror = null; };
+    iconWrap.appendChild(img);
 
-    <div class="main">
-      <header class="header">
-        <div class="container" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;">
-          <div class="searchbar">
-            <div style="font-size:18px">🔎</div>
-            <input class="search" id="globalSearch" placeholder="Search Life City…"/>
-          </div>
-          <div class="header-actions" style="display:flex;gap:10px;">
-            <button class="btn-amber">New</button>
-            <button class="btn-sky">Upload</button>
-            <button class="btn-emerald">Share</button>
+    a.innerHTML = `
+      <div class="card-top">
+        <div class="icon-slot"></div>
+        <div>
+          <div class="card-num">${label.split(' ')[0]}</div>
+          <div class="card-name">${name}</div>
+          <div class="card-meta">${url ? "Open in OneDrive" : "No link configured"}</div>
+          <div class="pills">
+            <span class="pill">Dept</span>
+            <span class="pill">Life City</span>
           </div>
         </div>
+      </div>`;
+    a.querySelector('.icon-slot').replaceWith(iconWrap);
+    a.querySelector('.card-top').appendChild(star);
+    grid.appendChild(a);
+  });
+}
 
-        <!-- Note input only (no list above the ticker) -->
-        <div class="container" style="padding:0 0 10px 0;">
-          <div class="panel" style="display:flex;flex-direction:column;gap:8px;">
-            <strong style="font-size:13px;color:#475569;">Highlights (type here to add to ticker)</strong>
-            <div class="highlights-editor">
-              <textarea id="newNote" rows="2" placeholder="Write a new note…"></textarea>
-              <button id="addNoteBtn" class="btn btn-add">➕ Add</button>
-              <button id="clearAll" class="btn btn-clear">🗑 Clear all</button>
-            </div>
-          </div>
-        </div>
+function getFilteredSorted() {
+  const q = (document.getElementById('search').value || '').toLowerCase().trim();
+  let list = departments.filter(d => normalizeLabel(d).toLowerCase().includes(q));
+  if (document.getElementById('sort').value === 'alpha')
+    list = [...list].sort((a,b)=>normalizeLabel(a).localeCompare(normalizeLabel(b)));
+  return list;
+}
 
-        <!-- Scrolling ticker -->
-        <div class="ticker" role="region" aria-label="Important highlights">
-          <div class="ticker__mask"></div>
-          <div class="ticker__viewport" id="ticker-track" aria-live="polite"></div>
-        </div>
-      </header>
-
-      <main class="container" style="padding:20px 0 28px;">
-        <div class="panel" style="margin-bottom:16px;">
-          <div style="display:grid;grid-template-columns:1fr 200px;gap:12px;align-items:end">
-            <div>
-              <label style="display:block;font-size:13px;margin-bottom:6px;color:#475569">Search departments</label>
-              <input id="search" class="search" placeholder="Type to filter…"/>
-            </div>
-            <div>
-              <label style="display:block;font-size:13px;margin-bottom:6px;color:#475569">View</label>
-              <select id="sort" class="select">
-                <option value="default">By number</option>
-                <option value="alpha">Alphabetical</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <section id="grid" class="grid"></section>
-      </main>
-
-      <footer class="container" style="padding:0 0 24px 0;color:#64748b;font-size:12px">
-        Last updated: 2025-08-16 15:16:07
-      </footer>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
-</body>
-</html>
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('search').addEventListener('input', ()=>render(getFilteredSorted()));
+  document.getElementById('sort').addEventListener('change', ()=>render(getFilteredSorted()));
+  const gs = document.getElementById('globalSearch');
+  if (gs) gs.addEventListener('input', e => { document.getElementById('search').value = e.target.value; render(getFilteredSorted()); });
+  render(departments);
+});
