@@ -8,49 +8,100 @@ const FALLBACK_ICON = "https://api.iconify.design/tabler/folder.svg?color=white"
 function normalizeLabel(label) { return label.replace(/^\d+\.\s*/, '').trim(); }
 function loadFavs() { try { return new Set(JSON.parse(localStorage.getItem('favorites')||'[]')); } catch { return new Set(); } }
 function saveFavs(f) { localStorage.setItem('favorites', JSON.stringify([...f])); }
-<script>
+
+  // ==== Persistent Highlights (localStorage)ticker ====
+  const STORAGE_KEY = "lifeCity.tickerNotes";
   const listEl = document.querySelector('#site-highlights');
   const track = document.getElementById('ticker-track');
+  const addBtn = document.getElementById('addNoteBtn');
+  const textarea = document.getElementById('newNote');
 
-  function escapeHTML(s) {
-    return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  // 1) Helpers
+  const escapeHTML = (s) => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const loadNotes = () => {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { return []; }
+  };
+  const saveNotes = (arr) => localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+
+  // 2) Render <ul> from array
+  function renderList(arr) {
+    listEl.innerHTML = "";
+    arr.forEach((text, i) => {
+      const li = document.createElement('li');
+      li.style.display = "flex";
+      li.style.alignItems = "center";
+      li.style.gap = "8px";
+      li.innerHTML = `
+        <span style="flex:1">${escapeHTML(text)}</span>
+        <button aria-label="Remove note" data-i="${i}" style="border:none;background:#ef4444;color:#fff;padding:2px 8px;border-radius:6px;cursor:pointer;">✕</button>
+      `;
+      listEl.appendChild(li);
+    });
   }
 
-  function renderTicker() {
-    const listItems = Array.from(listEl.querySelectorAll('li'))
-      .map(li => li.textContent.trim())
-      .filter(Boolean);
-
-    track.innerHTML = ''; // clear old
-    function renderItems(arr) {
-      const frag = document.createDocumentFragment();
-      arr.forEach(text => {
+  // 3) Render ticker track (duplicated once for seamless loop)
+  function renderTicker(arr = null) {
+    const items = arr ?? Array.from(listEl.querySelectorAll('li')).map(li => li.firstElementChild.textContent.trim());
+    track.innerHTML = "";
+    const frag = (data) => {
+      const f = document.createDocumentFragment();
+      data.forEach(text => {
         const item = document.createElement('div');
         item.className = 'ticker__item';
         item.innerHTML = `<span class="ticker__bullet"></span><span>${escapeHTML(text)}</span>`;
-        frag.appendChild(item);
+        f.appendChild(item);
       });
-      return frag;
-    }
-    track.appendChild(renderItems(listItems));
-    track.appendChild(renderItems(listItems));
+      return f;
+    };
+    track.appendChild(frag(items));
+    track.appendChild(frag(items));
   }
 
-  // Add button handler
-  document.getElementById('addNoteBtn').addEventListener('click', () => {
-    const textarea = document.getElementById('newNote');
-    const txt = textarea.value.trim();
+  // 4) Bootstrap: merge existing HTML notes → storage (first time only)
+  (function init() {
+    const stored = loadNotes();
+    if (stored.length === 0) {
+      const domNotes = Array.from(listEl.querySelectorAll('li')).map(li => li.textContent.trim()).filter(Boolean);
+      saveNotes(domNotes);
+      renderList(domNotes);
+      renderTicker(domNotes);
+    } else {
+      renderList(stored);
+      renderTicker(stored);
+    }
+  })();
+
+  // 5) Add note
+  addBtn?.addEventListener('click', () => {
+    const txt = textarea?.value.trim();
     if (!txt) return;
-    const li = document.createElement('li');
-    li.textContent = txt;
-    listEl.appendChild(li);
-    textarea.value = '';
-    renderTicker();
+    const notes = loadNotes();
+    notes.push(txt);
+    saveNotes(notes);
+    textarea.value = "";
+    renderList(notes);
+    renderTicker(notes);
   });
 
-  // Initial render
-  renderTicker();
-</script>
+  // 6) Remove note (click ✕)
+  listEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-i]');
+    if (!btn) return;
+    const idx = Number(btn.dataset.i);
+    const notes = loadNotes();
+    notes.splice(idx, 1);
+    saveNotes(notes);
+    renderList(notes);
+    renderTicker(notes);
+  });
+
+  // 7) Optional: Clear all (uncomment to use)
+  // document.getElementById('clearAll')?.addEventListener('click', () => {
+  //   saveNotes([]);
+  //   renderList([]);
+  //   renderTicker([]);
+  // });
+// ticker END
 
 
 function render(list) {
