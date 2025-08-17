@@ -8,6 +8,50 @@ const FALLBACK_ICON = "https://api.iconify.design/tabler/folder.svg?color=white"
 function normalizeLabel(label) { return label.replace(/^\d+\.\s*/, '').trim(); }
 function loadFavs() { try { return new Set(JSON.parse(localStorage.getItem('favorites')||'[]')); } catch { return new Set(); } }
 function saveFavs(f) { localStorage.setItem('favorites', JSON.stringify([...f])); }
+<script>
+  const listEl = document.querySelector('#site-highlights');
+  const track = document.getElementById('ticker-track');
+
+  function escapeHTML(s) {
+    return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function renderTicker() {
+    const listItems = Array.from(listEl.querySelectorAll('li'))
+      .map(li => li.textContent.trim())
+      .filter(Boolean);
+
+    track.innerHTML = ''; // clear old
+    function renderItems(arr) {
+      const frag = document.createDocumentFragment();
+      arr.forEach(text => {
+        const item = document.createElement('div');
+        item.className = 'ticker__item';
+        item.innerHTML = `<span class="ticker__bullet"></span><span>${escapeHTML(text)}</span>`;
+        frag.appendChild(item);
+      });
+      return frag;
+    }
+    track.appendChild(renderItems(listItems));
+    track.appendChild(renderItems(listItems));
+  }
+
+  // Add button handler
+  document.getElementById('addNoteBtn').addEventListener('click', () => {
+    const textarea = document.getElementById('newNote');
+    const txt = textarea.value.trim();
+    if (!txt) return;
+    const li = document.createElement('li');
+    li.textContent = txt;
+    listEl.appendChild(li);
+    textarea.value = '';
+    renderTicker();
+  });
+
+  // Initial render
+  renderTicker();
+</script>
+
 
 function render(list) {
   const grid = document.getElementById('grid');
