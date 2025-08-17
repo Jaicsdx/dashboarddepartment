@@ -1,65 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Life City – Departments Dashboard</title>
-
-<style>
-  :root{
-    --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8;
-    --pill:#0ea5e9; --shadow:0 6px 30px rgba(2,6,23,.18);
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:#0b1220;color:var(--text);font:14px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
-  a{color:inherit;text-decoration:none}
-  .layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
-  .sidebar{background:#8a4b22;background:linear-gradient(180deg,#a95a26,#7d431e);padding:14px}
-  .sidebar .panel{background:transparent;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px;margin:12px 0}
-  .sidebar a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px}
-  .sidebar a:hover{background:rgba(255,255,255,.08)}
-  .main{background:#eff6ff10}
-  .container{max-width:1040px;margin:0 auto;padding:0 16px}
-  .header{position:sticky;top:0;background:#0b1220;border-bottom:1px solid rgba(255,255,255,.08);z-index:20}
-  .searchbar{display:flex;align-items:center;gap:10px;background:#111827;border:1px solid #374151;border-radius:12px;padding:8px 10px}
-  .search{width:260px;background:transparent;border:0;color:var(--text);outline:none}
-  .btn-amber,.btn-sky,.btn-emerald{border:0;border-radius:10px;padding:8px 12px;color:#0b1220;font-weight:600}
-  .btn-amber{background:#fbbf24}.btn-sky{background:#38bdf8}.btn-emerald{background:#34d399}
-
-  /* Ticker */
-  .ticker{--height:44px;--gap:28px;--speed:40s;--bg:#0b1220;--fg:#fff;--accent:#ffd166;
-    position:relative;height:var(--height);overflow:hidden;background:var(--bg);color:var(--fg);
-    border-top:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1)}
-  .ticker__mask{position:absolute;inset:0;pointer-events:none;-webkit-mask:linear-gradient(90deg,transparent 0,#000 60px,#000 calc(100% - 60px),transparent 100%);mask:linear-gradient(90deg,transparent 0,#000 60px,#000 calc(100% - 60px),transparent 100%)}
-  .ticker__viewport{height:100%;display:flex;align-items:center;gap:var(--gap);width:max-content;animation:marquee var(--speed) linear infinite;animation-direction:reverse;will-change:transform}
-  .ticker:hover .ticker__viewport{animation-play-state:paused}
-  .ticker__item{display:inline-flex;align-items:center;gap:10px;white-space:nowrap;font:600 14px/1 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;padding-inline:2px}
-  .ticker__bullet{width:8px;height:8px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 2px rgba(255,255,255,.15) inset}
-  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-  .highlights-editor{display:flex;gap:8px;align-items:flex-start}
-  #newNote{flex:1;font-size:14px;padding:6px;border-radius:6px;border:1px solid #334155;background:#0b1220;color:var(--text);resize:vertical;max-height:96px}
-  .btn{padding:6px 12px;font-size:14px;border-radius:6px;border:none;color:#fff;cursor:pointer}
-  .btn-add{background:#38bdf8}.btn-clear{background:#64748b}
-
-  /* Grid / cards */
-  .panel{background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
-  .grid{display:grid;grid-template-columns:1fr;gap:12px}
-  @media(min-width:860px){.grid{grid-template-columns:1fr 1fr}}
-  .card{display:block;background:#0b1324;border:1px solid #1f2937;border-radius:18px;padding:14px;transition:.2s;box-shadow:0 6px 18px rgba(3,7,18,.25)}
-  .card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(3,7,18,.35)}
-  .card-top{display:flex;gap:14px;align-items:center;position:relative}
-  .icon-badge{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;flex:0 0 56px}
-  .icon-badge img{width:32px;height:32px;filter:brightness(10)}
-  .star{position:absolute;right:4px;top:4px;font-size:18px;color:#64748b}
-  .star.active{color:#f59e0b}
-  .card-num{font:11px/1.2 ui-monospace,monospace;color:#9ca3af}
-  .card-name{font-size:16px;font-weight:800}
-  .card-meta{font-size:12px;color:#94a3b8}
-  .pills{display:flex;gap:6px;margin-top:6px}
-  .pill{font-size:11px;border-radius:999px;padding:2px 8px;background:#0b1220;border:1px solid #334155}
-
-  footer{color:#94a3b8}
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Life City – Departments Dashboard</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <div class="layout">
@@ -69,68 +14,56 @@
         <div style="font-weight:800;font-size:18px">Dashboard</div>
       </div>
 
-      <div class="panel" style="background:transparent;border-color:transparent;color:#fff">
+      <!-- Sidebar Links -->
+      <div class="panel">
         <div style="opacity:.9;font-size:12px;margin:8px 12px 4px;">Finance & Tracking</div>
-        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1zOiW_1e00csF1FHKZX6h_DaVxrLKe3unuHLZwWRUJNw/edit?gid=401075469#gid=401075469">📊 Tracker</a>
-        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/checkboxmenu/"> 📊 QUICK TRACKER ENTRY</a>
-        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1eWBZQZsQap3BABUNPdKvvd6HzAnC3RZvrd1N6jPQGsY/edit?gid=211823180#gid=211823180">💰 Payments Forecast</a>
-        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1Aj38AwzHZIHP0zVye9Z0HE9BXxiMa1DSO8OoUWCX8Kg/edit?gid=17854660#gid=17854660">🏦 Fixed Deposit</a>
-        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1knQ5kQx8u_GlhtjgFVDHjNIOYA6bKM6K3v61eG1Sy3I/edit?gid=0#gid=0">🏠 Mortgage</a>
-        <a target="_blank" rel="noopener" href="https://calendar.google.com/calendar/u/0/r">📅 Calendar</a>
-        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/incomepersecond/">📐 Income Calculator per second</a>
-      </div>
-
-      <div class="panel" style="background:transparent;border-color:transparent;color:#fff">
-        <div style="opacity:.9;font-size:12px;margin:8px 12px 4px;">Navigation</div>
-        <a href="#top">🏠 Home</a>
-        <a href="#settings">⚙️ Settings</a>
-        <a href="#support">🆘 Support</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/...">📊 Tracker</a>
+        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/checkboxmenu/"> 📊 Quick Tracker Entry</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/...">💰 Payments Forecast</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/...">🏦 Fixed Deposit</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/...">🏠 Mortgage</a>
+        <a target="_blank" rel="noopener" href="https://calendar.google.com/calendar/">📅 Calendar</a>
       </div>
     </aside>
 
     <div class="main">
       <header class="header">
-        <div class="container" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;">
-          <div class="searchbar">
+        <div class="container" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
+          
+          <!-- Search -->
+          <div class="searchbar" style="flex:1;display:flex;align-items:center;gap:6px;">
             <div style="font-size:18px">🔎</div>
-            <input class="search" id="globalSearch" placeholder="Search Life City…"/>
+            <input class="search" id="globalSearch" placeholder="Search Life City…" style="flex:1;min-width:160px;"/>
           </div>
-          <div style="display:flex;gap:10px;">
-            <button class="btn-amber">New</button>
-            <button class="btn-sky">Upload</button>
-            <button class="btn-emerald">Share</button>
-          </div>
-        </div>
 
-        <!-- Note input (no visible list) -->
-        <div class="container" style="padding:0 0 10px 0;">
-          <div class="panel" style="display:flex;flex-direction:column;gap:8px;">
-            <strong style="font-size:13px;color:#94a3b8;">Highlights → Ticker</strong>
-            <div class="highlights-editor">
-              <textarea id="newNote" rows="2" placeholder="Write a new note…"></textarea>
-              <button id="addNoteBtn" class="btn btn-add">➕ Add</button>
-              <button id="clearAll" class="btn btn-clear">🗑 Clear all</button>
-            </div>
+          <!-- Notes Input -->
+          <div class="note-input" style="display:flex;gap:8px;flex:1;min-width:240px;">
+            <textarea id="newNote" rows="1" placeholder="Write a note…" 
+              style="flex:1;font-size:14px;padding:6px;border-radius:6px;border:1px solid #ccc;resize:none;"></textarea>
+            <button id="addNoteBtn" 
+              style="padding:6px 12px;font-size:14px;border-radius:6px;border:none;background:#38bdf8;color:white;cursor:pointer;">
+              ➕
+            </button>
           </div>
-        </div>
-
-        <!-- Scrolling ticker -->
-        <div class="ticker" role="region" aria-label="Important highlights">
-          <div class="ticker__mask"></div>
-          <div class="ticker__viewport" id="ticker-track" aria-live="polite"></div>
         </div>
       </header>
 
+      <!-- Ticker -->
+      <div class="ticker" role="region" aria-label="Highlights">
+        <div class="ticker__mask"></div>
+        <div class="ticker__viewport" id="ticker-track" aria-live="polite"></div>
+      </div>
+
       <main class="container" style="padding:20px 0 28px;">
-        <div class="panel" style="margin-bottom:16px;">
+        <div class="panel">
           <div style="display:grid;grid-template-columns:1fr 200px;gap:12px;align-items:end">
             <div>
-              <label style="display:block;font-size:13px;margin-bottom:6px;color:#94a3b8">Search departments</label>
+              <label style="display:block;font-size:13px;margin-bottom:6px;">Search departments</label>
               <input id="search" class="search" placeholder="Type to filter…"/>
             </div>
             <div>
-              <label style="display:block;font-size:13px;margin-bottom:6px;color:#94a3b8">View</label>
-              <select id="sort" class="search" style="width:100%;background:#111827;border:1px solid #374151;border-radius:12px;padding:8px 10px">
+              <label style="display:block;font-size:13px;margin-bottom:6px;">View</label>
+              <select id="sort" class="select">
                 <option value="default">By number</option>
                 <option value="alpha">Alphabetical</option>
               </select>
@@ -141,181 +74,12 @@
         <section id="grid" class="grid"></section>
       </main>
 
-      <footer class="container" style="padding:0 0 24px 0;color:#94a3b8;font-size:12px">Single-file build</footer>
+      <footer class="container" style="padding:12px;color:#64748b;font-size:12px;text-align:center;">
+        Last updated: 2025-08-17
+      </footer>
     </div>
   </div>
-
-<script>
-/* ------------ DATA (labels, links, icons) ------------ */
-const departments = [
- "1. Diplomacy","02. Business","03. Major Projects","04. Controlled Documents","05. Anju Wifey",
- "06. Health, Fitness & Emergency","07. Benefits, Insurance & Taxation","08. Family Safety & Intelligence","09. Security","10. Law",
- "11. Asset Management & Properties","12. Finance","13. Social Committee & Family","14. Dreams & Exploration","15. Philanthropy",
- "16. Art, Film, Music & Culture","17. Food","18. Immigration","19. Procurement Department","20. Daily Logs & Planner",
- "21. Automobile & Transportation","22. Science Division","23. Employment Resources","24. Archives & Museum",
- "25. Housing & Urban Development","26. Communications","27. Utilities","28. Public Works","29. Environmental & Sustainability"
-];
-
-const urls = [
- "https://onedrive.live.com/?id=A0E5D4FE7220C501%21seee7328e7e9c4f578275995dc4435cac&cid=a0e5d4fe7220c501&ithint=folder&migratedtospo=true",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EnbvFoCubAFAmG6BycYyoAgB8aFRAQe_PJnIV5DTEX4uQw?e=ZX6e9p",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/Egy4JTjVZB9Hj_fHV7WZI7wBS8gHOM4JCibmCIxUNXg3JA?e=PXsh3L",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EvDHgj4UV-1AuWKV5zz3rvcBIHtiG880gsP5yLSF6WYIrg?e=I78DJN",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/Eg2wbt5jdbVLiHPI_-9b_2ABm5oBWIrC-y2yBd8qFfgj-Q?e=GxQpNJ",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/Evxve7efbGNMrqOTk-cOXwEB5deNiFdZgW2bwfcWUtQkAw?e=uIugW5",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EiQBxfpY5CFFhIAu2bJuBKkBsJTsWqyxd-drZ0H848l7dQ?e=lhg9Bz",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/ElHiLq5_CmhFi65PdCNgBhoBkdCbO6dydhFUjYg0wpXLSw?e=3QAUr8",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/Evlz2w0hdHZEkhvu6pp49tsB5XxNFS_Cm5Py1mj-ZGna4Q?e=PVLdIf",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EnoSW_PPcdJMqcJdueYl_bIBHCqPEGWH-E2Hv8hTdLOsww?e=Yhq7uh",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EvjRP4Cp5vdOtjuDduOTnY4BqqdZS89xlRNOW6EksgKTyg?e=sQNZcc",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EtUoQswyBFVKpJZZOdhFhbgBTxeAVCpPR-qlECUP49uCBQ?e=hbSTH9",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EjVdjKqejkZNnmslISEuyrYBu0yYvSBauQMOjDForXt1rQ?e=dSEbTf",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EgnvLw10WE5HiKn43P__UgEBI99utn3D4olx_VIDnOGWIA?e=jFXhvQ",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/Ek3hIqqFIn9IidmwCDErKfUBtgyu0F-yXs54_yhINHe11w?e=1ylM7D",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/En55UIzWlHdMq_kPMnxb27wBMz0IlWLYhc1znC48EnQz2A?e=tAIbjq",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EtJyo9UnN3RHhmIEw0j-CxcBJRD3EOF8gIWunZUUvFgkBQ?e=Q2v5aD",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/ErCNHmpsf0tFo9KeXBwLcU0BJRR3SBGYFD9gnxKsOmURdA?e=6arJ12",
- "https://onedrive.live.com/?id=A0E5D4FE7220C501%21s905ba87005bd4611a9409bbdf53015c8&cid=a0e5d4fe7220c501&ithint=folder&migratedtospo=true",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/El-2As-gxMhIoewcdhQQDD8BluJtLj3N-FuQcQNdNwfKyg?e=F5UXiO",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/Emh3awOG_65ApeiaLUO9dwoBDd1o1Padh8Kjrs2LyXanRw?e=ih2Cd1",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/Et_-gWUjPp1BmRtPUKWHMRYBYv5sHZidyXS2A4d84IzXqg?e=FNehho",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EtNESq1VQ0REpwMmryy95QUBK5ArjstMcCsBo3uye5Zevw?e=qWdhiD",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/Eg22sU1wlKxClu1md6813G8BfrnP7r5jBhXEvpEKuQ4Q2Q?e=7m5gSa",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EsqJC4IoPSBDipGf1-XTCwEBQNACPzKcYYnJC8CwXaL3ww?e=jKaHvq",
- "https://onedrive.live.com/?id=A0E5D4FE7220C501%21s5b8f60feb29940248fd4ed74dfb39f93&cid=a0e5d4fe7220c501&ithint=folder&migratedtospo=true",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EgSt-q_XwQdDtkQtojctRqYB3cqlca5DcT6EbyNg3ZrbWg?e=jdK6Wa",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/Ehw5-wSQ0ntBnlBic-3yCS0B6IJkX3MAxFBT4fD-9D6OXQ?e=caLC7n",
- "https://1drv.ms/f/c/a0e5d4fe7220c501/EjNKI1nMXIFFrezPFGAD5hEBfb_GREXd5LK9odSWAGg9yQ?e=zLqRy3"
-];
-
-const iconUrls = [
- "https://api.iconify.design/tabler/handshake.svg?color=white","https://api.iconify.design/tabler/briefcase.svg?color=white","https://api.iconify.design/tabler/building-skyscraper.svg?color=white","https://api.iconify.design/tabler/files.svg?color=white","https://api.iconify.design/tabler/heart.svg?color=white","https://api.iconify.design/tabler/medical-cross.svg?color=white","https://api.iconify.design/tabler/receipt-2.svg?color=white","https://api.iconify.design/tabler/shield-lock.svg?color=white","https://api.iconify.design/tabler/lock.svg?color=white","https://api.iconify.design/tabler/scale.svg?color=white","https://api.iconify.design/tabler/home.svg?color=white","https://api.iconify.design/tabler/currency-dollar.svg?color=white","https://api.iconify.design/tabler/users.svg?color=white","https://api.iconify.design/tabler/rocket.svg?color=white","https://api.iconify.design/tabler/heart-handshake.svg?color=white","https://api.iconify.design/tabler/palette.svg?color=white","https://api.iconify.design/tabler/utensils.svg?color=white","https://api.iconify.design/tabler/id.svg?color=white","https://api.iconify.design/tabler/shopping-cart.svg?color=white","https://api.iconify.design/tabler/calendar.svg?color=white","https://api.iconify.design/tabler/car.svg?color=white","https://api.iconify.design/tabler/flask-2.svg?color=white","https://api.iconify.design/tabler/toolbox.svg?color=white","https://api.iconify.design/tabler/building-bank.svg?color=white","https://api.iconify.design/tabler/building.svg?color=white","https://api.iconify.design/tabler/messages.svg?color=white","https://api.iconify.design/tabler/plug.svg?color=white","https://api.iconify.design/tabler/tools.svg?color=white","https://api.iconify.design/tabler/leaf.svg?color=white"
-];
-
-const palette = ["#22c55e","#38bdf8","#f59e0b","#60a5fa","#0284c7","#fbbf24","#94a3b8","#f59e0b","#10b981","#ef4444","#3b82f6","#22c55e","#06b6d4","#f97316","#f43f5e","#8b5cf6","#fb7185","#0ea5e9","#16a34a","#f59e0b","#60a5fa","#06b6d4","#64748b","#ea580c","#22c55e","#f97316","#0891b2","#475569","#84cc16"];
-const FALLBACK_ICON = "https://api.iconify.design/tabler/folder.svg?color=white";
-
-/* ------------ Helpers ------------ */
-const normalizeLabel = s => s.replace(/^\d+\.\s*/,'').trim();
-const loadFavs = () => { try{ return new Set(JSON.parse(localStorage.getItem('favorites')||'[]')); } catch{ return new Set(); } };
-const saveFavs = f => localStorage.setItem('favorites', JSON.stringify([...f]));
-
-/* ------------ Ticker (input only) ------------ */
-document.addEventListener('DOMContentLoaded', () => {
-  const STORAGE_KEY = "lifeCity.tickerNotes";
-  const track = document.getElementById('ticker-track');
-  const addBtn = document.getElementById('addNoteBtn');
-  const textarea = document.getElementById('newNote');
-  const clearAllBtn = document.getElementById('clearAll');
-
-  const escapeHTML = s => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  const loadNotes = () => { try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]"); } catch{ return []; } };
-  const saveNotes = arr => localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-
-  function renderTicker(arr){
-    const items = (arr ?? loadNotes());
-    track.innerHTML = "";
-    const frag = data => {
-      const f = document.createDocumentFragment();
-      data.forEach(text => {
-        const el = document.createElement('div');
-        el.className = 'ticker__item';
-        el.innerHTML = `<span class="ticker__bullet"></span><span>${escapeHTML(text)}</span>`;
-        f.appendChild(el);
-      });
-      return f;
-    };
-    track.appendChild(frag(items));
-    track.appendChild(frag(items)); // duplicate for seamless loop
-  }
-
-  if(loadNotes().length===0){
-    saveNotes(["Loop recording: new clip every 5 minutes","Auto-cleanup respects storage cap","Use Guided Access to keep app foregrounded","Mount your phone safely & legally"]);
-  }
-  renderTicker();
-
-  addBtn.addEventListener('click', ()=>{
-    const txt = (textarea.value||"").trim();
-    if(!txt) return;
-    const notes = loadNotes(); notes.push(txt); saveNotes(notes);
-    textarea.value = ""; renderTicker(notes);
-  });
-  clearAllBtn.addEventListener('click', ()=>{ saveNotes([]); renderTicker([]); });
-
-  /* ------------ Grid rendering ------------ */
-  const grid = document.getElementById('grid');
-  const search = document.getElementById('search');
-  const sortSel = document.getElementById('sort');
-  const gs = document.getElementById('globalSearch');
-
-  function render(list){
-    const favs = loadFavs();
-    const favList = list.filter(l => favs.has(l));
-    const otherList = list.filter(l => !favs.has(l));
-    const finalList = [...favList,...otherList];
-    grid.innerHTML = '';
-
-    finalList.forEach(label=>{
-      const name = normalizeLabel(label);
-      const idx = departments.indexOf(label);
-      const url = urls[idx];
-
-      const a = document.createElement('a');
-      a.className = 'card';
-      a.href = url || '#';
-      a.target = '_blank';
-      a.rel = 'noopener';
-      if(!url){ a.addEventListener('click',e=>e.preventDefault()); a.title='No link yet'; }
-
-      const star = document.createElement('span');
-      star.className = 'star' + (favs.has(label)?' active':'');
-      star.title = favs.has(label)?'Unpin':'Pin to top';
-      star.textContent = '★';
-      star.addEventListener('click', ev => {
-        ev.preventDefault(); ev.stopPropagation();
-        const f = loadFavs();
-        if(f.has(label)) f.delete(label); else f.add(label);
-        saveFavs(f); render(getFilteredSorted());
-      });
-
-      const iconWrap = document.createElement('div');
-      iconWrap.className = 'icon-badge';
-      iconWrap.style.background = palette[idx % palette.length];
-      const img = document.createElement('img');
-      img.src = iconUrls[idx] || FALLBACK_ICON;
-      img.alt = name + ' icon';
-      img.onerror = () => { img.src = FALLBACK_ICON; img.onerror = null; };
-      iconWrap.appendChild(img);
-
-      a.innerHTML = `
-        <div class="card-top">
-          <div class="icon-slot"></div>
-          <div>
-            <div class="card-num">${label.split(' ')[0]}</div>
-            <div class="card-name">${name}</div>
-            <div class="card-meta">${url ? "Open in OneDrive" : "No link configured"}</div>
-            <div class="pills"><span class="pill">Dept</span><span class="pill">Life City</span></div>
-          </div>
-        </div>`;
-      a.querySelector('.icon-slot').replaceWith(iconWrap);
-      a.querySelector('.card-top').appendChild(star);
-      grid.appendChild(a);
-    });
-  }
-
-  function getFilteredSorted(){
-    const q = (search.value||'').toLowerCase().trim();
-    let list = departments.filter(d => normalizeLabel(d).toLowerCase().includes(q));
-    if(sortSel.value==='alpha') list = [...list].sort((a,b)=>normalizeLabel(a).localeCompare(normalizeLabel(b)));
-    return list;
-  }
-
-  search.addEventListener('input', ()=>render(getFilteredSorted()));
-  sortSel.addEventListener('change', ()=>render(getFilteredSorted()));
-  gs.addEventListener('input', e=>{ search.value = e.target.value; render(getFilteredSorted()); });
-
-  render(departments);
-});
-</script>
+  
+  <script src="script.js"></script>
 </body>
 </html>
