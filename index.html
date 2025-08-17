@@ -54,10 +54,10 @@
   .ticker {
     --height: 44px;
     --gap: 28px;
-    --speed: 40s;         /* slower = larger number */
-    --bg: #0b1220;        /* bar background */
-    --fg: #fff;           /* text color */
-    --accent: #ffd166;    /* bullet color */
+    --speed: 40s; 
+    --bg: #0b1220;
+    --fg: #fff;
+    --accent: #ffd166;
 
     position: relative;
     height: var(--height);
@@ -70,7 +70,6 @@
   .ticker__mask {
     position: absolute; inset: 0;
     pointer-events: none;
-    /* soft fade on edges */
     -webkit-mask: linear-gradient(90deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%);
             mask: linear-gradient(90deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%);
   }
@@ -79,15 +78,13 @@
     display: flex;
     align-items: center;
     gap: var(--gap);
-    /* duplicates inside for seamless loop */
     width: max-content;
     animation: marquee var(--speed) linear infinite;
-    animation-direction: reverse; /* ← makes it go left → right */
+    animation-direction: reverse; /* ← left-to-right */
     will-change: transform;
   }
   .ticker:hover .ticker__viewport { animation-play-state: paused; }
 
-  /* Item */
   .ticker__item {
     display: inline-flex;
     align-items: center;
@@ -103,36 +100,31 @@
 
   @keyframes marquee {
     from { transform: translateX(0); }
-    to   { transform: translateX(-50%); } /* we render content twice → 50% shift loops seamlessly */
-  }
-
-  /* Respect user preference */
-  @media (prefers-reduced-motion: reduce) {
-    .ticker__viewport { animation: none; }
+    to   { transform: translateX(-50%); }
   }
 </style>
 
-<!-- Put this where you want the bar to appear (e.g., below header) -->
+<!-- Public “feed” container you can edit -->
+<ul id="site-highlights">
+  <li>Loop recording: new clip every 5 minutes</li>
+  <li>Auto-cleanup to respect storage cap</li>
+  <li>Use Guided Access to keep app foregrounded</li>
+  <li>Mount your phone safely & legally</li>
+  <li>⭐ Important: Always check storage before long trips</li>
+</ul>
+
+<!-- Ticker -->
 <div class="ticker" role="region" aria-label="Important highlights">
   <div class="ticker__mask"></div>
   <div class="ticker__viewport" id="ticker-track" aria-live="polite"></div>
 </div>
 
 <script>
-  // ===== Configure your highlights here =====
-  // You can push notes dynamically from your page content:
-  // Example: <div id="site-note" hidden>Auto-rotate every 5 minutes; storage cap 1.5 GB.</div>
-  const siteNote = document.querySelector('#site-note')?.textContent?.trim();
+  // Read notes directly from visible <ul>
+  const listItems = Array.from(document.querySelectorAll('#site-highlights li'))
+    .map(li => li.textContent.trim())
+    .filter(Boolean);
 
-  const HIGHLIGHTS = [
-    "Loop recording: new clip every 5 minutes",
-    "Auto-cleanup to respect storage cap",
-    "Use Guided Access to keep app foregrounded",
-    "Mount your phone safely & legally",
-    siteNote // pulled from website itself (optional)
-  ].filter(Boolean);
-
-  // ===== Render ticker (duplicated once for seamless loop) =====
   (function initTicker() {
     const track = document.getElementById('ticker-track');
     if (!track) return;
@@ -142,24 +134,15 @@
       arr.forEach(text => {
         const item = document.createElement('div');
         item.className = 'ticker__item';
-        item.innerHTML = `<span class="ticker__bullet" aria-hidden="true"></span><span>${escapeHTML(text)}</span>`;
+        item.innerHTML = `<span class="ticker__bullet"></span><span>${escapeHTML(text)}</span>`;
         frag.appendChild(item);
       });
       return frag;
     }
 
-    // First pass
-    track.appendChild(renderItems(HIGHLIGHTS));
-    // Second pass (duplicate) → enables continuous loop with translateX(-50%)
-    track.appendChild(renderItems(HIGHLIGHTS));
-
-    // Optional: touch to pause/resume on mobile
-    let paused = false;
-    function togglePause() {
-      paused = !paused;
-      track.style.animationPlayState = paused ? 'paused' : 'running';
-    }
-    track.addEventListener('click', togglePause, { passive: true });
+    // Render twice for seamless scroll
+    track.appendChild(renderItems(listItems));
+    track.appendChild(renderItems(listItems));
   })();
 
   function escapeHTML(s) {
