@@ -8,62 +8,78 @@
 </head>
 <body>
   <div class="layout">
+    <!-- Sidebar -->
     <aside class="sidebar">
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;">
-        <div style="font-size:26px">🏙️</div>
-        <div style="font-weight:800;font-size:18px">Dashboard</div>
+      <div class="brand">
+        <div class="brand-emoji">🏙️</div>
+        <div class="brand-name">Dashboard</div>
       </div>
 
-      <!-- Sidebar Links -->
-      <div class="panel">
-        <div style="opacity:.9;font-size:12px;margin:8px 12px 4px;">Finance & Tracking</div>
-        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/...">📊 Tracker</a>
-        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/checkboxmenu/"> 📊 Quick Tracker Entry</a>
-        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/...">💰 Payments Forecast</a>
-        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/...">🏦 Fixed Deposit</a>
-        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/...">🏠 Mortgage</a>
-        <a target="_blank" rel="noopener" href="https://calendar.google.com/calendar/">📅 Calendar</a>
+      <div class="panel panel--ghost">
+        <div class="panel-title">Finance & Tracking</div>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1zOiW_1e00csF1FHKZX6h_DaVxrLKe3unuHLZwWRUJNw/edit?gid=401075469#gid=401075469">📊 Tracker</a>
+        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/checkboxmenu/">📊 Quick Tracker Entry</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1eWBZQZsQap3BABUNPdKvvd6HzAnC3RZvrd1N6jPQGsY/edit?gid=211823180#gid=211823180">💰 Payments Forecast</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1Aj38AwzHZIHP0zVye9Z0HE9BXxiMa1DSO8OoUWCX8Kg/edit?gid=17854660#gid=17854660">🏦 Fixed Deposit</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1knQ5kQx8u_GlhtjgFVDHjNIOYA6bKM6K3v61eG1Sy3I/edit?gid=0#gid=0">🏠 Mortgage</a>
+        <a target="_blank" rel="noopener" href="https://calendar.google.com/calendar/u/0/r">📅 Calendar</a>
+        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/incomepersecond/">📐 Income per second</a>
+      </div>
+
+      <div class="panel panel--ghost">
+        <div class="panel-title">Navigation</div>
+        <a href="#top">🏠 Home</a>
+        <a href="#settings">⚙️ Settings</a>
+        <a href="#support">🆘 Support</a>
       </div>
     </aside>
 
+    <!-- Main -->
     <div class="main">
-      <header class="header">
-        <div class="container" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
-          
-          <!-- Search -->
-          <div class="searchbar" style="flex:1;display:flex;align-items:center;gap:6px;">
-            <div style="font-size:18px">🔎</div>
-            <input class="search" id="globalSearch" placeholder="Search Life City…" style="flex:1;min-width:160px;"/>
+      <!-- Header -->
+      <header class="header" id="top">
+        <div class="container header-bar">
+          <!-- Left cluster -->
+          <div class="header-left">
+            <div class="searchbar">
+              <span class="search-emoji">🔎</span>
+              <input class="input search" id="globalSearch" placeholder="Search Life City…"/>
+            </div>
+
+            <!-- Note input (adds directly to ticker) -->
+            <div class="note-input">
+              <textarea id="newNote" rows="1" class="input" placeholder="Write a highlight…"></textarea>
+              <button id="addNoteBtn" class="btn btn-sky" title="Add note to ticker">➕</button>
+              <button id="clearAll" class="btn btn-muted" title="Clear all ticker notes">🗑</button>
+            </div>
           </div>
 
-          <!-- Notes Input -->
-          <div class="note-input" style="display:flex;gap:8px;flex:1;min-width:240px;">
-            <textarea id="newNote" rows="1" placeholder="Write a note…" 
-              style="flex:1;font-size:14px;padding:6px;border-radius:6px;border:1px solid #ccc;resize:none;"></textarea>
-            <button id="addNoteBtn" 
-              style="padding:6px 12px;font-size:14px;border-radius:6px;border:none;background:#38bdf8;color:white;cursor:pointer;">
-              ➕
-            </button>
+          <!-- Right cluster -->
+          <div class="header-right">
+            <button class="btn btn-amber">New</button>
+            <button class="btn btn-sky">Upload</button>
+            <button class="btn btn-emerald">Share</button>
           </div>
+        </div>
+
+        <!-- Ticker -->
+        <div class="ticker" role="region" aria-label="Highlights">
+          <div class="ticker__mask"></div>
+          <div class="ticker__viewport" id="ticker-track" aria-live="polite"></div>
         </div>
       </header>
 
-      <!-- Ticker -->
-      <div class="ticker" role="region" aria-label="Highlights">
-        <div class="ticker__mask"></div>
-        <div class="ticker__viewport" id="ticker-track" aria-live="polite"></div>
-      </div>
-
-      <main class="container" style="padding:20px 0 28px;">
+      <!-- Controls -->
+      <main class="container content">
         <div class="panel">
-          <div style="display:grid;grid-template-columns:1fr 200px;gap:12px;align-items:end">
-            <div>
-              <label style="display:block;font-size:13px;margin-bottom:6px;">Search departments</label>
-              <input id="search" class="search" placeholder="Type to filter…"/>
+          <div class="controls">
+            <div class="control">
+              <label>Search departments</label>
+              <input id="search" class="input" placeholder="Type to filter…"/>
             </div>
-            <div>
-              <label style="display:block;font-size:13px;margin-bottom:6px;">View</label>
-              <select id="sort" class="select">
+            <div class="control">
+              <label>View</label>
+              <select id="sort" class="input">
                 <option value="default">By number</option>
                 <option value="alpha">Alphabetical</option>
               </select>
@@ -71,15 +87,14 @@
           </div>
         </div>
 
+        <!-- Cards grid -->
         <section id="grid" class="grid"></section>
       </main>
 
-      <footer class="container" style="padding:12px;color:#64748b;font-size:12px;text-align:center;">
-        Last updated: 2025-08-17
-      </footer>
+      <footer class="container footer">Single-file app layout • © Life City</footer>
     </div>
   </div>
-  
+
   <script src="script.js"></script>
 </body>
 </html>
