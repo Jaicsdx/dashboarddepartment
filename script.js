@@ -1,127 +1,87 @@
-// ---------------- Dashboard data ----------------
-const departments = ["1. Diplomacy","02. Business","03. Major Projects","04. Controlled Documents","05. Anju Wifey","06. Health, Fitness & Emergency","07. Benefits, Insurance & Taxation","08. Family Safety & Intelligence","09. Security","10. Law","11. Asset Management & Properties","12. Finance","13. Social Committee & Family","14. Dreams & Exploration","15. Philanthropy","16. Art, Film, Music & Culture","17. Food","18. Immigration","19. Procurement Department","20. Daily Logs & Planner","21. Automobile & Transportation","22. Science Division","23. Employment Resources","24. Archives & Museum","25. Housing & Urban Development","26. Communications","27. Utilities","28. Public Works","29. Environmental & Sustainability"];
+const departments = ["1. Diplomacy","02. Business","03. Major Projects","04. Controlled Documents",
+"05. Anju Wifey","06. Health, Fitness & Emergency","07. Benefits, Insurance & Taxation",
+"08. Family Safety & Intelligence","09. Security","10. Law","11. Asset Management & Properties",
+"12. Finance","13. Social Committee & Family","14. Dreams & Exploration","15. Philanthropy",
+"16. Art, Film, Music & Culture","17. Food","18. Immigration","19. Procurement Department",
+"20. Daily Logs & Planner","21. Automobile & Transportation","22. Science Division",
+"23. Employment Resources","24. Archives & Museum","25. Housing & Urban Development",
+"26. Communications","27. Utilities","28. Public Works","29. Environmental & Sustainability"];
 
-const urls = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]; // fill if needed
-
-const iconUrls = [
-  "https://api.iconify.design/tabler/handshake.svg?color=white","https://api.iconify.design/tabler/briefcase.svg?color=white","https://api.iconify.design/tabler/building-skyscraper.svg?color=white","https://api.iconify.design/tabler/files.svg?color=white","https://api.iconify.design/tabler/heart.svg?color=white","https://api.iconify.design/tabler/medical-cross.svg?color=white","https://api.iconify.design/tabler/receipt-2.svg?color=white","https://api.iconify.design/tabler/shield-lock.svg?color=white","https://api.iconify.design/tabler/lock.svg?color=white","https://api.iconify.design/tabler/scale.svg?color=white","https://api.iconify.design/tabler/home.svg?color=white","https://api.iconify.design/tabler/currency-dollar.svg?color=white","https://api.iconify.design/tabler/users.svg?color=white","https://api.iconify.design/tabler/rocket.svg?color=white","https://api.iconify.design/tabler/heart-handshake.svg?color=white","https://api.iconify.design/tabler/palette.svg?color=white","https://api.iconify.design/tabler/utensils.svg?color=white","https://api.iconify.design/tabler/id.svg?color=white","https://api.iconify.design/tabler/shopping-cart.svg?color=white","https://api.iconify.design/tabler/calendar.svg?color=white","https://api.iconify.design/tabler/car.svg?color=white","https://api.iconify.design/tabler/flask-2.svg?color=white","https://api.iconify.design/tabler/toolbox.svg?color=white","https://api.iconify.design/tabler/building-bank.svg?color=white","https://api.iconify.design/tabler/building.svg?color=white","https://api.iconify.design/tabler/messages.svg?color=white","https://api.iconify.design/tabler/plug.svg?color=white","https://api.iconify.design/tabler/tools.svg?color=white","https://api.iconify.design/tabler/leaf.svg?color=white"
+const urls = [
+  "https://onedrive.live.com/...?id=...Diplomacy",
+  "https://1drv.ms/f/c/...Business",
+  "https://1drv.ms/f/c/...MajorProjects",
+  // ... fill with your real links (keep order same as departments) ...
+  "https://1drv.ms/f/c/...Environmental"
 ];
 
-const palette = ["#22c55e","#38bdf8","#f59e0b","#60a5fa","#0284c7","#fbbf24","#94a3b8","#f59e0b","#10b981","#ef4444","#3b82f6","#22c55e","#06b6d4","#f97316","#f43f5e","#8b5cf6","#fb7185","#0ea5e9","#16a34a","#f59e0b","#60a5fa","#06b6d4","#64748b","#ea580c","#22c55e","#f97316","#0891b2","#475569","#84cc16"];
 const FALLBACK_ICON = "https://api.iconify.design/tabler/folder.svg?color=white";
 
-// ---------------- Helpers ----------------
-function normalizeLabel(label) { return label.replace(/^\d+\.\s*/, '').trim(); }
-function loadFavs() { try { return new Set(JSON.parse(localStorage.getItem('favorites')||'[]')); } catch { return new Set(); } }
-function saveFavs(f) { localStorage.setItem('favorites', JSON.stringify([...f])); }
+// ===== NOTES TICKER =====
+const STORAGE_KEY = "lifeCity.tickerNotes";
+const track = document.getElementById('ticker-track');
+const addBtn = document.getElementById('addNoteBtn');
+const textarea = document.getElementById('newNote');
 
-// ---------------- Ticker (no visible list; input only) ----------------
-document.addEventListener('DOMContentLoaded', () => {
-  const STORAGE_KEY = "lifeCity.tickerNotes";
-  const track = document.getElementById('ticker-track');
-  const addBtn = document.getElementById('addNoteBtn');
-  const textarea = document.getElementById('newNote');
-  const clearAllBtn = document.getElementById('clearAll');
+const escapeHTML = (s) => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const loadNotes = () => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]"); } catch { return []; } };
+const saveNotes = (arr) => localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
 
-  const escapeHTML = (s) => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  const loadNotes = () => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { return []; } };
-  const saveNotes = (arr) => localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+function renderTicker(arr) {
+  track.innerHTML = "";
+  const frag = (data) => {
+    const f = document.createDocumentFragment();
+    data.forEach(text => {
+      const item = document.createElement('div');
+      item.className = 'ticker__item';
+      item.innerHTML = `<span class="ticker__bullet"></span><span>${escapeHTML(text)}</span>`;
+      f.appendChild(item);
+    });
+    return f;
+  };
+  track.appendChild(frag(arr));
+  track.appendChild(frag(arr));
+}
 
-  function renderTicker(arr) {
-    const items = arr ?? loadNotes();
-    track.innerHTML = "";
-    const frag = (data) => {
-      const f = document.createDocumentFragment();
-      data.forEach(text => {
-        const item = document.createElement('div');
-        item.className = 'ticker__item';
-        item.innerHTML = `<span class="ticker__bullet"></span><span>${escapeHTML(text)}</span>`;
-        f.appendChild(item);
-      });
-      return f;
-    };
-    track.appendChild(frag(items));
-    track.appendChild(frag(items)); // duplicate for seamless loop
-  }
+// Init
+(function init() {
+  const notes = loadNotes();
+  if (notes.length === 0) {
+    const defaults = ["Loop recording every 5 mins","Auto cleanup","Check storage before trips"];
+    saveNotes(defaults);
+    renderTicker(defaults);
+  } else renderTicker(notes);
+})();
 
-  // Seed with defaults if empty (optional)
-  if (loadNotes().length === 0) {
-    saveNotes([
-      "Loop recording: new clip every 5 minutes",
-      "Auto-cleanup respects storage cap",
-      "Use Guided Access to keep app foregrounded",
-      "Mount your phone safely & legally"
-    ]);
-  }
-  renderTicker();
-
-  addBtn?.addEventListener('click', () => {
-    const txt = textarea?.value.trim();
-    if (!txt) return;
-    const notes = loadNotes();
-    notes.push(txt);
-    saveNotes(notes);
-    textarea.value = "";
-    renderTicker(notes);
-  });
-
-  clearAllBtn?.addEventListener('click', () => {
-    saveNotes([]);
-    renderTicker([]);
-  });
+// Add note
+addBtn.addEventListener('click', () => {
+  const txt = textarea.value.trim();
+  if (!txt) return;
+  const notes = loadNotes();
+  notes.push(txt);
+  saveNotes(notes);
+  textarea.value = "";
+  renderTicker(notes);
 });
 
-// ---------------- Departments grid ----------------
+// ===== DEPARTMENTS =====
+function normalizeLabel(label) { return label.replace(/^\d+\.\s*/, '').trim(); }
+
 function render(list) {
   const grid = document.getElementById('grid');
-  const favs = loadFavs();
-  const favList = list.filter(l => favs.has(l));
-  const otherList = list.filter(l => !favs.has(l));
-  const finalList = [...favList, ...otherList];
   grid.innerHTML = '';
-
-  finalList.forEach(label => {
+  list.forEach((label, idx) => {
     const name = normalizeLabel(label);
-    const idx = departments.indexOf(label);
     const a = document.createElement('a');
-    a.href = urls[idx] || '#'; a.target = '_blank'; a.rel = 'noopener';
+    a.href = urls[idx] || '#';
+    a.target = '_blank';
     a.className = 'card';
-
-    const star = document.createElement('span');
-    star.className = 'star' + (favs.has(label) ? ' active' : '');
-    star.title = favs.has(label) ? 'Unpin' : 'Pin to top';
-    star.textContent = '★';
-    star.addEventListener('click', (ev) => {
-      ev.preventDefault(); ev.stopPropagation();
-      const f = loadFavs();
-      if (f.has(label)) f.delete(label); else f.add(label);
-      saveFavs(f); render(getFilteredSorted());
-    });
-
-    const iconWrap = document.createElement('div');
-    iconWrap.className = 'icon-badge';
-    iconWrap.style.background = palette[idx % palette.length];
-    const img = document.createElement('img');
-    img.src = iconUrls[idx] || FALLBACK_ICON;
-    img.alt = name + ' icon';
-    img.onerror = () => { img.src = FALLBACK_ICON; img.onerror = null; };
-    iconWrap.appendChild(img);
-
     a.innerHTML = `
       <div class="card-top">
-        <div class="icon-slot"></div>
-        <div>
-          <div class="card-num">${label.split(' ')[0]}</div>
-          <div class="card-name">${name}</div>
-          <div class="card-meta">Open in OneDrive</div>
-          <div class="pills">
-            <span class="pill">Dept</span>
-            <span class="pill">Life City</span>
-          </div>
-        </div>
+        <div class="card-num">${label.split(' ')[0]}</div>
+        <div class="card-name">${name}</div>
+        <div class="card-meta">Open in OneDrive</div>
       </div>`;
-    a.querySelector('.icon-slot').replaceWith(iconWrap);
-    a.querySelector('.card-top').appendChild(star);
     grid.appendChild(a);
   });
 }
