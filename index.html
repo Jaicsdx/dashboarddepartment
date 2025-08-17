@@ -47,7 +47,7 @@
             <button class="btn-amber">New</button>
             <button class="btn-sky">Upload</button>
             <button class="btn-emerald">Share</button>
-            <div id="site-note" hidden>Auto-rotate every 5 minutes; storage cap 1.5 GB.</div>
+     
 
             <!-- =================== HIGHLIGHTS TICKER =================== -->
 <style>
@@ -106,6 +106,16 @@
 
 <!-- Public “feed” container you can edit -->
 <ul id="site-highlights">
+  <!-- Notes editor -->
+<div style="margin:10px 0; display:flex; gap:8px; align-items:flex-start;">
+  <textarea id="newNote" rows="2" placeholder="Write a new note…" 
+    style="flex:1; font-size:14px; padding:6px; border-radius:6px; border:1px solid #ccc;"></textarea>
+  <button id="addNoteBtn" 
+    style="padding:6px 12px; font-size:14px; border-radius:6px; border:none; background:#38bdf8; color:white; cursor:pointer;">
+    ➕ Add
+  </button>
+</div>
+
   <li>Loop recording: new clip every 5 minutes</li>
   <li>Auto-cleanup to respect storage cap</li>
   <li>Use Guided Access to keep app foregrounded</li>
