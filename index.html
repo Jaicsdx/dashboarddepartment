@@ -47,6 +47,125 @@
             <button class="btn-amber">New</button>
             <button class="btn-sky">Upload</button>
             <button class="btn-emerald">Share</button>
+            <!-- =================== HIGHLIGHTS TICKER =================== -->
+<style>
+  .ticker {
+    --height: 44px;
+    --gap: 28px;
+    --speed: 40s;         /* slower = larger number */
+    --bg: #0b1220;        /* bar background */
+    --fg: #fff;           /* text color */
+    --accent: #ffd166;    /* bullet color */
+
+    position: relative;
+    height: var(--height);
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--fg);
+    border-top: 1px solid rgba(255,255,255,.1);
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  .ticker__mask {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    /* soft fade on edges */
+    -webkit-mask: linear-gradient(90deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%);
+            mask: linear-gradient(90deg, transparent 0, #000 60px, #000 calc(100% - 60px), transparent 100%);
+  }
+  .ticker__viewport {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+    /* duplicates inside for seamless loop */
+    width: max-content;
+    animation: marquee var(--speed) linear infinite;
+    animation-direction: reverse; /* ← makes it go left → right */
+    will-change: transform;
+  }
+  .ticker:hover .ticker__viewport { animation-play-state: paused; }
+
+  /* Item */
+  .ticker__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    font: 600 14px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
+    padding-inline: 2px;
+  }
+  .ticker__bullet {
+    width: 8px; height: 8px; border-radius: 999px; background: var(--accent);
+    box-shadow: 0 0 0 2px rgba(255,255,255,.15) inset;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); } /* we render content twice → 50% shift loops seamlessly */
+  }
+
+  /* Respect user preference */
+  @media (prefers-reduced-motion: reduce) {
+    .ticker__viewport { animation: none; }
+  }
+</style>
+
+<!-- Put this where you want the bar to appear (e.g., below header) -->
+<div class="ticker" role="region" aria-label="Important highlights">
+  <div class="ticker__mask"></div>
+  <div class="ticker__viewport" id="ticker-track" aria-live="polite"></div>
+</div>
+
+<script>
+  // ===== Configure your highlights here =====
+  // You can push notes dynamically from your page content:
+  // Example: <div id="site-note" hidden>Auto-rotate every 5 minutes; storage cap 1.5 GB.</div>
+  const siteNote = document.querySelector('#site-note')?.textContent?.trim();
+
+  const HIGHLIGHTS = [
+    "Loop recording: new clip every 5 minutes",
+    "Auto-cleanup to respect storage cap",
+    "Use Guided Access to keep app foregrounded",
+    "Mount your phone safely & legally",
+    siteNote // pulled from website itself (optional)
+  ].filter(Boolean);
+
+  // ===== Render ticker (duplicated once for seamless loop) =====
+  (function initTicker() {
+    const track = document.getElementById('ticker-track');
+    if (!track) return;
+
+    function renderItems(arr) {
+      const frag = document.createDocumentFragment();
+      arr.forEach(text => {
+        const item = document.createElement('div');
+        item.className = 'ticker__item';
+        item.innerHTML = `<span class="ticker__bullet" aria-hidden="true"></span><span>${escapeHTML(text)}</span>`;
+        frag.appendChild(item);
+      });
+      return frag;
+    }
+
+    // First pass
+    track.appendChild(renderItems(HIGHLIGHTS));
+    // Second pass (duplicate) → enables continuous loop with translateX(-50%)
+    track.appendChild(renderItems(HIGHLIGHTS));
+
+    // Optional: touch to pause/resume on mobile
+    let paused = false;
+    function togglePause() {
+      paused = !paused;
+      track.style.animationPlayState = paused ? 'paused' : 'running';
+    }
+    track.addEventListener('click', togglePause, { passive: true });
+  })();
+
+  function escapeHTML(s) {
+    return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+</script>
+<!-- ================= END HIGHLIGHTS TICKER ================= -->
+
           </div>
         </div>
       </header>
@@ -74,6 +193,7 @@
       <footer class="container" style="padding:0 0 24px 0;color:#64748b;font-size:12px">Last updated: 2025-08-16 15:16:07</footer>
     </div>
   </div>
+  <div id="site-note" hidden>Auto-rotate every 5 minutes; storage cap 1.5 GB.</div>
 
   <script src="script.js"></script>
 </body>
