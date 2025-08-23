@@ -12,7 +12,7 @@ const DEPARTMENTS = [
   { num: "08.", name: "Family Safety & Intelligence",      url: "https://1drv.ms/f/c/a0e5d4fe7220c501/ElHiLq5_CmhFi65PdCNgBhoBkdCbO6dydhFUjYg0wpXLSw?e=3QAUr8", icon: "https://api.iconify.design/tabler/shield-lock.svg?color=white", color: "#f59e0b" },
   { num: "09.", name: "Security",                          url: "https://1drv.ms/f/c/a0e5d4fe7220c501/Evlz2w0hdHZEkhvu6pp49tsB5XxNFS_Cm5Py1mj-ZGna4Q?e=PVLdIf", icon: "https://api.iconify.design/tabler/lock.svg?color=white", color: "#10b981" },
   { num: "10.", name: "Law",                               url: "https://1drv.ms/f/c/a0e5d4fe7220c501/EnoSW_PPcdJMqcJdueYl_bIBHCqPEGWH-E2Hv8hTdLOsww?e=Yhq7uh", icon: "https://api.iconify.design/tabler/scale.svg?color=white", color: "#ef4444" },
-  { num: "11.", name: "Asset Management & Properties",     url: "https://1drv.ms/f/c/a0e5d4fe7220c501/EvjRP4Cp5vdOtjuDduOTnY4BqqdZS89xlRNOW6EksgKTyg?e=sQNZcc", icon: "https://api.iconify.design/tabler/home.svg?color=white", color: "#3b82f6" },
+  { num: "11.", name: "Asset Management & Properties",     url: "https://1drv.ms/f/c/a0e5d4fe7220c501/EvjRP4Cp5vdOtjuDduOTY4BqqdZS89xlRNOW6EksgKTyg?e=sQNZcc", icon: "https://api.iconify.design/tabler/home.svg?color=white", color: "#3b82f6" },
   { num: "12.", name: "Finance",                           url: "https://1drv.ms/f/c/a0e5d4fe7220c501/EtUoQswyBFVKpJZZOdhFhbgBTxeAVCpPR-qlECUP49uCBQ?e=hbSTH9", icon: "https://api.iconify.design/tabler/currency-dollar.svg?color=white", color: "#22c55e" },
   { num: "13.", name: "Social Committee & Family",         url: "https://1drv.ms/f/c/a0e5d4fe7220c501/EjVdjKqejkZNnmslISEuyrYBu0yYvSBauQMOjDForXt1rQ?e=dSEbTf", icon: "https://api.iconify.design/tabler/users.svg?color=white", color: "#06b6d4" },
   { num: "14.", name: "Dreams & Exploration",              url: "https://1drv.ms/f/c/a0e5d4fe7220c501/EgnvLw10WE5HiKn43P__UgEBI99utn3D4olx_VIDnOGWIA?e=jFXhvQ", icon: "https://api.iconify.design/tabler/rocket.svg?color=white", color: "#f97316" },
@@ -166,4 +166,21 @@ function saveFavs(set){ localStorage.setItem('favorites', JSON.stringify([...set
   globalSearch.addEventListener('input', e => { search.value = e.target.value; render(getFilteredSorted()); });
 
   render(DEPARTMENTS);
+})();
+
+/* ========= Responsive: optional sidebar toggle (no-op if button absent) ========= */
+(function initSidebarToggle(){
+  const btn = document.querySelector('.menu-toggle');
+  if (!btn) return;
+  btn.addEventListener('click', ()=>{
+    const open = document.body.classList.toggle('sidebar-open');
+    btn.setAttribute('aria-expanded', String(open));
+  });
+  // Click on dimmed backdrop to close
+  document.addEventListener('click', (e)=>{
+    if (document.body.classList.contains('sidebar-open') && e.target === document.body){
+      document.body.classList.remove('sidebar-open');
+      btn.setAttribute('aria-expanded', "false");
+    }
+  });
 })();
