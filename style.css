@@ -1,3 +1,13 @@
+/* ======================
+   Life City – Responsive CSS (mobile-first)
+   Key iPhone fixes:
+   • Prevent horizontal scroll & zoom quirks
+   • Respect safe-area insets (notch)
+   • Shrink controls/icons on small screens
+   • Tighter ticker to avoid overflow
+   • Robust grid/card scaling
+   ====================== */
+
 :root{
   --bg:#0b1220;           /* page background */
   --panel:#101827;        /* card/panel background */
@@ -20,26 +30,27 @@
   --ticker-accent:#ffd166;
 }
 
-*{ box-sizing: border-box; }
-html,body{ height:100%; }
-
-/* ===== Base / Type ===== */
+/* ---- Global Resets / Mobile Safe Defaults ---- */
+*{box-sizing:border-box}
+html,body{height:100%}
+html{
+  -webkit-text-size-adjust:100%; /* stops iOS Safari from auto-zooming text */
+}
 body{
   margin:0;
   background:var(--bg);
   color:var(--text);
-  /* Fluid typography: readable on phones, crisp on desktop */
-  font: clamp(0.9rem, 0.35vw + 0.85rem, 1rem)/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+  font:14px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+  overflow-x:hidden; /* hard stop any horizontal scroll on mobile */
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
-/* iPhone: prevent horizontal creeping & respect notches */
-html, body { overflow-x: hidden; }
-@supports (-webkit-touch-callout: none){
-  html { -webkit-text-size-adjust: 100%; }
-  input, select, textarea { font-size:16px; } /* stop iOS auto-zoom */
-}
+/* Utility: prevent flex kids from overflowing on narrow screens */
+.minw-0{min-width:0}
 
-/* ===== Layout ===== */
+/* ---- Layout ---- */
 .layout{
   display:grid;
   grid-template-columns:260px 1fr;
@@ -49,10 +60,11 @@ html, body { overflow-x: hidden; }
   .layout{ grid-template-columns: 1fr; }
 }
 
-/* ===== Sidebar ===== */
+/* ---- Sidebar ---- */
 .sidebar{
   background:linear-gradient(180deg,var(--brand1),var(--brand2));
   padding:14px;
+  padding-top: calc(14px + env(safe-area-inset-top));
 }
 .brand{display:flex;align-items:center;gap:10px;padding:8px 10px}
 .brand-emoji{font-size:26px}
@@ -82,68 +94,67 @@ html, body { overflow-x: hidden; }
 }
 .sidebar a:hover{ background-color: rgba(255,255,255,.08); }
 
-/* ===== Main / Container ===== */
-.main{ background:#0c1326; }
-
-/* Safe-area guards for iPhones with notch / home indicator */
+/* ---- Main ---- */
+.main{background:#0c1326}
 .container{
-  max-width: min(1120px, 94vw);
-  margin: 0 auto;
-  padding-left: max(16px, env(safe-area-inset-left));
-  padding-right: max(16px, env(safe-area-inset-right));
+  width:100%;
+  max-width:1120px;
+  margin:0 auto;
+  padding:0 16px;
 }
 
-/* ===== Header ===== */
+/* ---- Header ---- */
 .header{
   position:sticky;top:0;z-index:20;
   background:var(--bg);
   border-bottom:1px solid rgba(255,255,255,.07);
+  padding-top: env(safe-area-inset-top); /* notch safe */
 }
 .header-bar{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:14px 0; flex-wrap:wrap;
+  overflow:hidden; /* guard against child overflow */
 }
-/* iOS: allow children to shrink instead of forcing overflow */
-.header-left{display:flex;gap:12px;align-items:center;flex:1;min-width:280px;flex-wrap:wrap; min-width:0;}
+.header-left{
+  display:flex;gap:12px;align-items:center;flex:1;min-width:0;flex-wrap:wrap;
+}
 .header-right{display:flex;gap:10px}
 
+/* ---- Inputs / Search ---- */
 .searchbar{
   display:flex;align-items:center;gap:8px;
   background:#0e162c;border:1px solid var(--panel-brd);
-  border-radius:12px;padding:8px 10px;flex:1;min-width:220px; min-width:0;
+  border-radius:12px;padding:8px 10px;flex:1;min-width:0; /* allow shrinking */
 }
 .search-emoji{font-size:18px}
 .input{
   width:100%; background:transparent; border:0; outline:none; color:var(--text);
-  font-size:14px;
+  font-size:14px; min-width:0;
 }
 .input.select{appearance:auto}
 .note-input{
-  display:flex; gap:8px; align-items:flex-start; min-width:240px; flex:1; min-width:0;
+  display:flex; gap:8px; align-items:flex-start; min-width:0; flex:1; /* was 240px */
 }
 .note-input .input{
   background:#0e162c;border:1px solid var(--panel-brd);border-radius:8px;padding:8px
 }
 .btn{
-  padding:8px 12px;border-radius:10px;color:#0b1220;border:0;font-weight:700;cursor:pointer
+  padding:8px 12px;border-radius:10px;color:#0b1220;border:0;font-weight:700;cursor:pointer;
+  white-space:nowrap;
 }
 .btn-amber{background:var(--amber)}
 .btn-sky{background:var(--sky)}
 .btn-emerald{background:var(--emerald)}
 .btn-muted{background:var(--mutedBtn);color:#fff}
 
-/* Stack header inputs on narrow phones */
-@media (max-width: 540px){
-  .header-left{ flex-direction: column; align-items: stretch; }
-  .searchbar, .note-input{ width:100%; }
-  .note-input textarea{ width:100%; }
+/* Smaller buttons on very small screens */
+@media (max-width:380px){
+  .btn{ padding:6px 10px; font-size:13px }
 }
 
-/* ===== Ticker ===== */
+/* ---- Ticker ---- */
 .ticker{
-  --height: clamp(38px, 3.2vw, 48px);
-  --gap: clamp(18px, 2.2vw, 28px);
-  --speed:40s;
+  --height:42px; --gap:26px; --speed:40s;
   background:var(--ticker-bg); color:var(--ticker-fg);
   position:relative;height:var(--height);overflow:hidden;
   border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07)
@@ -169,70 +180,66 @@ html, body { overflow-x: hidden; }
 }
 @keyframes marquee{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
-/* ===== Content ===== */
-.content{ padding:18px 0 28px; }
-
-/* Controls row */
-.controls{
-  display:grid; gap:12px; grid-template-columns: 1fr minmax(180px, 240px); align-items:end;
+/* Reduce ticker size on small phones to avoid overflow/zoom */
+@media (max-width:420px){
+  .ticker{ --height:36px; --gap:18px }
+  .ticker__item{ font-size:13px }
 }
-@media (max-width:720px){ .controls{ grid-template-columns: 1fr; } }
-/* Allow children to shrink on iOS */
-.controls > * { min-width:0; }
 
+/* ---- Content ---- */
+.content{padding:18px 0 28px}
+.controls{
+  display:grid; gap:12px; grid-template-columns: 1fr 220px; align-items:end;
+}
+@media (max-width:720px){
+  .controls{ grid-template-columns: 1fr; }
+}
 .control label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px 2px}
 
-/* ===== Grid & Cards ===== */
-/* Fluid auto-fit columns; cards never overflow on mobile */
-.grid{
-  display:grid; gap:14px;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-}
+/* ---- Grid & Cards ---- */
+.grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media (min-width:720px){ .grid{grid-template-columns:1fr 1fr} }
+@media (min-width:1020px){ .grid{grid-template-columns:1fr 1fr 1fr} }
+
+/* Card base */
 .card{
   display:block;background:var(--panel);border:1px solid var(--panel-brd);
-  border-radius:18px;padding:14px;transition:.18s;box-shadow:var(--shadow);text-decoration:none;color:inherit
+  border-radius:18px;padding:14px;transition:.18s;box-shadow:var(--shadow);text-decoration:none;color:inherit;
+  min-width:0; /* keep within grid column */
 }
 .card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.45)}
-.card-top{display:flex;gap:14px;align-items:center;position:relative; min-width:0;}
+.card-top{display:flex;gap:14px;align-items:center;position:relative;min-width:0}
 .icon-badge{
-  width: clamp(48px, 4.6vw, 64px);
-  height: clamp(48px, 4.6vw, 64px);
-  border-radius:16px;display:grid;place-items:center;flex:0 0 auto;
+  width:56px;height:56px;border-radius:16px;display:grid;place-items:center;flex:0 0 56px;
 }
-.icon-badge img{
-  width: clamp(26px, 2.8vw, 34px);
-  height: clamp(26px, 2.8vw, 34px);
-  filter:brightness(10);
-}
+.icon-badge img{width:32px;height:32px;filter:brightness(10)}
 .star{position:absolute;right:4px;top:4px;font-size:18px;color:#64748b}
 .star.active{color:#f59e0b}
 .card-num{font:11px/1.2 ui-monospace,monospace;color:var(--muted)}
-.card-name{font-size: clamp(15px, 1.15vw + 0.6rem, 18px); font-weight:800}
-.card-meta{font-size: clamp(11px, 0.9vw + 0.45rem, 13px); color:var(--muted);margin-top:2px}
+.card-name{font-size:16px;font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.card-meta{font-size:12px;color:var(--muted);margin-top:2px}
 .pills{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
-.pill{font-size: clamp(10px, 0.75vw + 0.35rem, 12px); border-radius:999px;padding:2px 8px;background:#0b1220;border:1px solid #334155;color:#cbd5e1}
+.pill{font-size:11px;border-radius:999px;padding:2px 8px;background:#0b1220;border:1px solid #334155;color:#cbd5e1}
 
-/* ===== Footer ===== */
-.footer{color:#94a3b8;font-size:12px;text-align:center;padding:10px 0}
-
-/* ===== Media / Images ===== */
-img, svg, video{ max-width:100%; height:auto; }
-
-/* ===== Small-screen enhancements ===== */
-/* If you later add an off-canvas toggle, these help; otherwise harmless */
-@media (max-width: 880px){
-  .sidebar{
-    width: 100%;
-  }
-  html, body { overflow-x: hidden; }
+.footer{
+  color:#94a3b8;font-size:12px;text-align:center;padding:10px 0;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
 }
 
-/* Coarse pointers (touch) get bigger tap targets */
-@media (pointer: coarse){
-  .btn{ padding: 10px 14px; }
+/* ---- Compact tweaks for narrow iPhones (<= 360–390 px) ---- */
+@media (max-width:390px){
+  .brand-emoji{ font-size:22px }
+  .brand-name{ font-size:16px }
+  .icon-badge{ width:48px; height:48px; flex-basis:48px }
+  .icon-badge img{ width:28px; height:28px }
+  .card{ padding:12px }
+  .card-top{ gap:10px }
+  .card-name{ font-size:15px }
+  .header-bar{ gap:10px }
 }
 
-/* Accessibility: honor reduced motion */
-@media (prefers-reduced-motion: reduce){
-  .ticker__viewport{ animation: none !important; }
+/* Extra small fallback */
+@media (max-width:330px){
+  .btn{ padding:5px 8px; font-size:12px }
+  .search-emoji{ display:none }
 }
