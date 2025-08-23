@@ -20,17 +20,26 @@
   --ticker-accent:#ffd166;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
+*{ box-sizing: border-box; }
+html,body{ height:100%; }
+
+/* ===== Base / Type ===== */
 body{
   margin:0;
   background:var(--bg);
   color:var(--text);
-  /* Fluid base type across devices */
+  /* Fluid typography: readable on phones, crisp on desktop */
   font: clamp(0.9rem, 0.35vw + 0.85rem, 1rem)/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
 }
 
-/* Layout */
+/* iPhone: prevent horizontal creeping & respect notches */
+html, body { overflow-x: hidden; }
+@supports (-webkit-touch-callout: none){
+  html { -webkit-text-size-adjust: 100%; }
+  input, select, textarea { font-size:16px; } /* stop iOS auto-zoom */
+}
+
+/* ===== Layout ===== */
 .layout{
   display:grid;
   grid-template-columns:260px 1fr;
@@ -40,7 +49,7 @@ body{
   .layout{ grid-template-columns: 1fr; }
 }
 
-/* Sidebar */
+/* ===== Sidebar ===== */
 .sidebar{
   background:linear-gradient(180deg,var(--brand1),var(--brand2));
   padding:14px;
@@ -73,20 +82,10 @@ body{
 }
 .sidebar a:hover{ background-color: rgba(255,255,255,.08); }
 
-/* Mobile sidebar toggle button (optional, appears only on small screens) */
-.menu-toggle{
-  position: sticky; top: 0; z-index: 30;
-  display: none;
-  margin: 10px; padding: 10px 14px;
-  border: 1px solid #243045; border-radius: 10px;
-  background: #0e162c; color: var(--text);
-  box-shadow: var(--shadow);
-}
+/* ===== Main / Container ===== */
+.main{ background:#0c1326; }
 
-/* Main */
-.main{background:#0c1326}
-
-/* Fluid container with safe-area guards for notched phones */
+/* Safe-area guards for iPhones with notch / home indicator */
 .container{
   max-width: min(1120px, 94vw);
   margin: 0 auto;
@@ -94,25 +93,24 @@ body{
   padding-right: max(16px, env(safe-area-inset-right));
 }
 
-/* Header */
+/* ===== Header ===== */
 .header{
   position:sticky;top:0;z-index:20;
   background:var(--bg);
   border-bottom:1px solid rgba(255,255,255,.07);
-  -webkit-backdrop-filter: saturate(1.1) blur(0px);
-  backdrop-filter: none;
 }
 .header-bar{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:14px 0; flex-wrap:wrap;
 }
-.header-left{display:flex;gap:12px;align-items:center;flex:1;min-width:280px;flex-wrap:wrap}
+/* iOS: allow children to shrink instead of forcing overflow */
+.header-left{display:flex;gap:12px;align-items:center;flex:1;min-width:280px;flex-wrap:wrap; min-width:0;}
 .header-right{display:flex;gap:10px}
 
 .searchbar{
   display:flex;align-items:center;gap:8px;
   background:#0e162c;border:1px solid var(--panel-brd);
-  border-radius:12px;padding:8px 10px;flex:1;min-width:220px
+  border-radius:12px;padding:8px 10px;flex:1;min-width:220px; min-width:0;
 }
 .search-emoji{font-size:18px}
 .input{
@@ -121,7 +119,7 @@ body{
 }
 .input.select{appearance:auto}
 .note-input{
-  display:flex; gap:8px; align-items:flex-start; min-width:240px; flex:1;
+  display:flex; gap:8px; align-items:flex-start; min-width:240px; flex:1; min-width:0;
 }
 .note-input .input{
   background:#0e162c;border:1px solid var(--panel-brd);border-radius:8px;padding:8px
@@ -134,7 +132,14 @@ body{
 .btn-emerald{background:var(--emerald)}
 .btn-muted{background:var(--mutedBtn);color:#fff}
 
-/* Ticker */
+/* Stack header inputs on narrow phones */
+@media (max-width: 540px){
+  .header-left{ flex-direction: column; align-items: stretch; }
+  .searchbar, .note-input{ width:100%; }
+  .note-input textarea{ width:100%; }
+}
+
+/* ===== Ticker ===== */
 .ticker{
   --height: clamp(38px, 3.2vw, 48px);
   --gap: clamp(18px, 2.2vw, 28px);
@@ -164,15 +169,21 @@ body{
 }
 @keyframes marquee{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
-/* Content */
-.content{padding:18px 0 28px}
+/* ===== Content ===== */
+.content{ padding:18px 0 28px; }
+
+/* Controls row */
 .controls{
   display:grid; gap:12px; grid-template-columns: 1fr minmax(180px, 240px); align-items:end;
 }
 @media (max-width:720px){ .controls{ grid-template-columns: 1fr; } }
+/* Allow children to shrink on iOS */
+.controls > * { min-width:0; }
+
 .control label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px 2px}
 
-/* Grid & Cards: switch to fluid auto-fit layout */
+/* ===== Grid & Cards ===== */
+/* Fluid auto-fit columns; cards never overflow on mobile */
 .grid{
   display:grid; gap:14px;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -182,7 +193,7 @@ body{
   border-radius:18px;padding:14px;transition:.18s;box-shadow:var(--shadow);text-decoration:none;color:inherit
 }
 .card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.45)}
-.card-top{display:flex;gap:14px;align-items:center;position:relative}
+.card-top{display:flex;gap:14px;align-items:center;position:relative; min-width:0;}
 .icon-badge{
   width: clamp(48px, 4.6vw, 64px);
   height: clamp(48px, 4.6vw, 64px);
@@ -198,34 +209,25 @@ body{
 .card-num{font:11px/1.2 ui-monospace,monospace;color:var(--muted)}
 .card-name{font-size: clamp(15px, 1.15vw + 0.6rem, 18px); font-weight:800}
 .card-meta{font-size: clamp(11px, 0.9vw + 0.45rem, 13px); color:var(--muted);margin-top:2px}
-.pills{display:flex;gap:6px;margin-top:6px}
+.pills{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
 .pill{font-size: clamp(10px, 0.75vw + 0.35rem, 12px); border-radius:999px;padding:2px 8px;background:#0b1220;border:1px solid #334155;color:#cbd5e1}
 
-/* Footer */
+/* ===== Footer ===== */
 .footer{color:#94a3b8;font-size:12px;text-align:center;padding:10px 0}
 
-/* Images always scale down safely */
-img{ max-width: 100%; height: auto; }
+/* ===== Media / Images ===== */
+img, svg, video{ max-width:100%; height:auto; }
 
-/* ===== Small-screen enhancements: collapsible sidebar ===== */
+/* ===== Small-screen enhancements ===== */
+/* If you later add an off-canvas toggle, these help; otherwise harmless */
 @media (max-width: 880px){
-  .menu-toggle{ display: inline-block; }
   .sidebar{
-    position: fixed; inset: 0 auto 0 0; width: min(86vw, 340px);
-    transform: translateX(-100%);
-    transition: transform .25s ease;
-    z-index: 40;
-  }
-  body.sidebar-open .sidebar{ transform: translateX(0); }
-  body.sidebar-open::after{
-    content: ""; position: fixed; inset: 0;
-    background: rgba(0,0,0,.45); backdrop-filter: blur(2px);
-    z-index: 35;
+    width: 100%;
   }
   html, body { overflow-x: hidden; }
 }
 
-/* Touch-friendly buttons on coarse pointers */
+/* Coarse pointers (touch) get bigger tap targets */
 @media (pointer: coarse){
   .btn{ padding: 10px 14px; }
 }
