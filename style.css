@@ -1,11 +1,6 @@
 /* ======================
    Life City – Responsive CSS (mobile-first)
-   Key iPhone fixes:
-   • Prevent horizontal scroll & zoom quirks
-   • Respect safe-area insets (notch)
-   • Shrink controls/icons on small screens
-   • Tighter ticker to avoid overflow
-   • Robust grid/card scaling
+   Adds: Hamburger toggle for off‑canvas sidebar
    ====================== */
 
 :root{
@@ -33,21 +28,17 @@
 /* ---- Global Resets / Mobile Safe Defaults ---- */
 *{box-sizing:border-box}
 html,body{height:100%}
-html{
-  -webkit-text-size-adjust:100%; /* stops iOS Safari from auto-zooming text */
-}
+html{-webkit-text-size-adjust:100%}
 body{
   margin:0;
   background:var(--bg);
   color:var(--text);
   font:14px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
-  overflow-x:hidden; /* hard stop any horizontal scroll on mobile */
+  overflow-x:hidden;
   padding-top: env(safe-area-inset-top);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 }
-
-/* Utility: prevent flex kids from overflowing on narrow screens */
 .minw-0{min-width:0}
 
 /* ---- Layout ---- */
@@ -77,30 +68,67 @@ body{
   box-shadow:var(--shadow);
   margin:12px 0;
 }
-.panel--ghost{
-  background:transparent;
-  border-color:transparent;
-  box-shadow:none;
-  color:#fff;
-}
-.panel-title{
-  opacity:.9;
-  font-size:12px;
-  margin:6px 6px 4px 6px;
-}
+.panel--ghost{ background:transparent; border-color:transparent; box-shadow:none; color:#fff; }
+.panel-title{ opacity:.9; font-size:12px; margin:6px 6px 4px 6px; }
 .sidebar a{
   display:flex;gap:10px;align-items:center;
   padding:10px 12px;border-radius:10px;color:#fff;text-decoration:none
 }
 .sidebar a:hover{ background-color: rgba(255,255,255,.08); }
 
+/* ---- Hamburger button (three lines) ---- */
+.menu-toggle{
+  display:none;
+  position:fixed;
+  top:12px; left:12px;
+  z-index:100;
+  width:42px; height:38px;
+  border-radius:10px;
+  border:1px solid var(--panel-brd);
+  background:var(--panel);
+  color:var(--text);
+  cursor:pointer;
+  box-shadow:var(--shadow);
+}
+/* Draw the three lines */
+.menu-toggle::before,
+.menu-toggle::after{
+  content:"";
+  position:absolute; left:10px; right:10px; height:2px; background:#cbd5e1;
+}
+.menu-toggle::before{ top:12px; box-shadow:0 7px 0 #cbd5e1; } /* top + middle */
+.menu-toggle::after{ bottom:12px; }                           /* bottom line */
+
+@media (max-width: 880px){
+  .menu-toggle{ display:block; }
+
+  /* Off-canvas sidebar */
+  .sidebar{
+    position:fixed;
+    top:0; left:-260px;
+    width:240px; height:100vh;
+    transition:left .28s ease;
+    z-index:90;
+    overflow:auto;
+  }
+  body.sidebar-open .sidebar{ left:0; }
+
+  /* Prevent background scroll while menu is open */
+  body.sidebar-open{ overflow:hidden; }
+
+  /* Dim background */
+  body.sidebar-open::after{
+    content:"";
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.45);
+    z-index:80;
+  }
+}
+
 /* ---- Main ---- */
 .main{background:#0c1326}
 .container{
-  width:100%;
-  max-width:1120px;
-  margin:0 auto;
-  padding:0 16px;
+  width:100%; max-width:1120px; margin:0 auto; padding:0 16px;
 }
 
 /* ---- Header ---- */
@@ -108,12 +136,11 @@ body{
   position:sticky;top:0;z-index:20;
   background:var(--bg);
   border-bottom:1px solid rgba(255,255,255,.07);
-  padding-top: env(safe-area-inset-top); /* notch safe */
+  padding-top: env(safe-area-inset-top);
 }
 .header-bar{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:14px 0; flex-wrap:wrap;
-  overflow:hidden; /* guard against child overflow */
+  padding:14px 0; flex-wrap:wrap; overflow:hidden;
 }
 .header-left{
   display:flex;gap:12px;align-items:center;flex:1;min-width:0;flex-wrap:wrap;
@@ -124,7 +151,7 @@ body{
 .searchbar{
   display:flex;align-items:center;gap:8px;
   background:#0e162c;border:1px solid var(--panel-brd);
-  border-radius:12px;padding:8px 10px;flex:1;min-width:0; /* allow shrinking */
+  border-radius:12px;padding:8px 10px;flex:1;min-width:0;
 }
 .search-emoji{font-size:18px}
 .input{
@@ -133,7 +160,7 @@ body{
 }
 .input.select{appearance:auto}
 .note-input{
-  display:flex; gap:8px; align-items:flex-start; min-width:0; flex:1; /* was 240px */
+  display:flex; gap:8px; align-items:flex-start; min-width:0; flex:1;
 }
 .note-input .input{
   background:#0e162c;border:1px solid var(--panel-brd);border-radius:8px;padding:8px
@@ -146,11 +173,7 @@ body{
 .btn-sky{background:var(--sky)}
 .btn-emerald{background:var(--emerald)}
 .btn-muted{background:var(--mutedBtn);color:#fff}
-
-/* Smaller buttons on very small screens */
-@media (max-width:380px){
-  .btn{ padding:6px 10px; font-size:13px }
-}
+@media (max-width:380px){ .btn{ padding:6px 10px; font-size:13px } }
 
 /* ---- Ticker ---- */
 .ticker{
@@ -170,30 +193,20 @@ body{
   animation-direction:reverse; will-change:transform;
 }
 .ticker:hover .ticker__viewport{ animation-play-state: paused; }
-.ticker__item{
-  display:inline-flex; align-items:center; gap:10px; white-space:nowrap;
-  font-weight:700; font-size:14px;
-}
+.ticker__item{ display:inline-flex; align-items:center; gap:10px; white-space:nowrap; font-weight:700; font-size:14px; }
 .ticker__bullet{
   width:8px;height:8px;border-radius:999px;background:var(--ticker-accent);
   box-shadow:0 0 0 2px rgba(255,255,255,.15) inset
 }
 @keyframes marquee{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
-
-/* Reduce ticker size on small phones to avoid overflow/zoom */
-@media (max-width:420px){
-  .ticker{ --height:36px; --gap:18px }
-  .ticker__item{ font-size:13px }
-}
+@media (max-width:420px){ .ticker{ --height:36px; --gap:18px } .ticker__item{ font-size:13px } }
 
 /* ---- Content ---- */
 .content{padding:18px 0 28px}
 .controls{
   display:grid; gap:12px; grid-template-columns: 1fr 220px; align-items:end;
 }
-@media (max-width:720px){
-  .controls{ grid-template-columns: 1fr; }
-}
+@media (max-width:720px){ .controls{ grid-template-columns: 1fr; } }
 .control label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px 2px}
 
 /* ---- Grid & Cards ---- */
@@ -201,32 +214,30 @@ body{
 @media (min-width:720px){ .grid{grid-template-columns:1fr 1fr} }
 @media (min-width:1020px){ .grid{grid-template-columns:1fr 1fr 1fr} }
 
-/* Card base */
 .card{
   display:block;background:var(--panel);border:1px solid var(--panel-brd);
   border-radius:18px;padding:14px;transition:.18s;box-shadow:var(--shadow);text-decoration:none;color:inherit;
-  min-width:0; /* keep within grid column */
+  min-width:0;
 }
 .card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.45)}
 .card-top{display:flex;gap:14px;align-items:center;position:relative;min-width:0}
-.icon-badge{
-  width:56px;height:56px;border-radius:16px;display:grid;place-items:center;flex:0 0 56px;
-}
+.icon-badge{ width:56px;height:56px;border-radius:16px;display:grid;place-items:center;flex:0 0 56px; }
 .icon-badge img{width:32px;height:32px;filter:brightness(10)}
 .star{position:absolute;right:4px;top:4px;font-size:18px;color:#64748b}
 .star.active{color:#f59e0b}
 .card-num{font:11px/1.2 ui-monospace,monospace;color:var(--muted)}
-.card-name{font-size:16px;font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.card-name{font-size:16px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .card-meta{font-size:12px;color:var(--muted);margin-top:2px}
 .pills{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
 .pill{font-size:11px;border-radius:999px;padding:2px 8px;background:#0b1220;border:1px solid #334155;color:#cbd5e1}
 
+/* ---- Footer ---- */
 .footer{
   color:#94a3b8;font-size:12px;text-align:center;padding:10px 0;
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
 }
 
-/* ---- Compact tweaks for narrow iPhones (<= 360–390 px) ---- */
+/* ---- Compact tweaks for narrow iPhones ---- */
 @media (max-width:390px){
   .brand-emoji{ font-size:22px }
   .brand-name{ font-size:16px }
@@ -237,8 +248,6 @@ body{
   .card-name{ font-size:15px }
   .header-bar{ gap:10px }
 }
-
-/* Extra small fallback */
 @media (max-width:330px){
   .btn{ padding:5px 8px; font-size:12px }
   .search-emoji{ display:none }
