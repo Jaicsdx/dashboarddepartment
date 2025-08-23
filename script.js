@@ -43,56 +43,96 @@ function loadFavs(){ try{ return new Set(JSON.parse(localStorage.getItem('favori
 function saveFavs(set){ localStorage.setItem('favorites', JSON.stringify([...set])); }
 
 /* ========= Ticker (note input only) ========= */
+/* ========= Ticker (JSON-powered with fallbacks) ========= */
 (function initTicker(){
-  const STORAGE_KEY = "lifeCity.tickerNotes";
-  const track = $('#ticker-track');
-  const addBtn = $('#addNoteBtn');
-  const textarea = $('#newNote');
-  const clearAll = $('#clearAll');
+  const FEED_URL = 'feed.json';                 // same folder as index.html
+  const STORAGE_KEY = "lifeCity.tickerNotes";   // local manual notes fallback
+  const track = document.getElementById('ticker-track');
+  const addBtn = document.getElementById('addNoteBtn');
+  const textarea = document.getElementById('newNote');
+  const clearAll = document.getElementById('clearAll');
 
-  const esc = s => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const esc = s => String(s||'').replace(/[&<>"']/g, m => (
+    {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
+  ));
+
+  // Local notes (fallback + manual add)
   const loadNotes = () => { try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]"); }catch{return[]} };
   const saveNotes = (arr) => localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
 
-  function renderTicker(items){
+  function renderTickerItems(items){
+    if (!track) return;
     track.innerHTML = '';
+
+    // Build a fragment from feed items
     const build = (arr) => {
       const frag = document.createDocumentFragment();
-      arr.forEach(t=>{
-        const d = document.createElement('div');
-        d.className = 'ticker__item';
-        d.innerHTML = `<span class="ticker__bullet"></span><span>${esc(t)}</span>`;
-        frag.appendChild(d);
+      arr.forEach(item=>{
+        const text = item.text || '';
+        const emoji = item.emoji ? `${item.emoji} ` : '';
+        const label = [emoji + text, item.dept ? `(${item.dept})` : ''].filter(Boolean).join(' ');
+        const wrap = document.createElement(item.url ? 'a' : 'div');
+        wrap.className = 'ticker__item';
+        if (item.url) { wrap.href = item.url; wrap.target = '_blank'; wrap.rel = 'noopener'; }
+        wrap.innerHTML = `<span class="ticker__bullet"></span><span>${esc(label)}</span>`;
+        frag.appendChild(wrap);
       });
       return frag;
     };
+
+    // Duplicate so the marquee can loop seamlessly
     track.appendChild(build(items));
-    track.appendChild(build(items)); // duplicate for seamless loop
+    track.appendChild(build(items));
   }
 
-  let notes = loadNotes();
-  if (notes.length === 0) {
-    notes = [
-      "Loop recording every 5 minutes",
-      "Auto-cleanup respects storage cap",
-      "Use Guided Access to keep app foregrounded",
-      "Mount your phone safely & legally"
-    ];
-    saveNotes(notes);
+  async function fetchFeed(){
+    try{
+      const res = await fetch(FEED_URL, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (!data || !Array.isArray(data.items)) throw new Error('Bad JSON shape');
+
+      // Merge JSON feed with any local notes (optional). Comment next line to disable merge:
+      const merged = [...data.items, ...loadNotes().map(t => ({ text: t }))];
+
+      // If JSON is empty and no notes, use safe defaults
+      const items = merged.length ? merged : [
+        { text: "Welcome to Life City", emoji:"🏙️" },
+        { text: "Add notes → they appear here", emoji:"➕" }
+      ];
+      renderTickerItems(items);
+    }catch(err){
+      // Fallback to local notes
+      const notes = loadNotes();
+      const items = notes.length ? notes.map(t => ({ text: t })) : [
+        { text: "Ticker feed.json not found; using fallback", emoji:"ℹ️" },
+        { text: "Add notes to populate ticker", emoji:"📝" }
+      ];
+      renderTickerItems(items);
+      // console.warn('Ticker feed error:', err);
+    }
   }
-  renderTicker(notes);
 
-  addBtn.addEventListener('click', ()=>{
-    const txt = (textarea.value||'').trim();
-    if(!txt) return;
-    notes = loadNotes(); notes.push(txt); saveNotes(notes);
-    textarea.value = ''; renderTicker(notes);
-  });
+  // Manual add / clear (still supported)
+  if (addBtn && textarea){
+    addBtn.addEventListener('click', ()=>{
+      const txt = (textarea.value||'').trim();
+      if(!txt) return;
+      const notes = loadNotes(); notes.push(txt); saveNotes(notes);
+      textarea.value = ''; fetchFeed(); // re-render with merged set
+    });
+  }
+  if (clearAll){
+    clearAll.addEventListener('click', ()=>{
+      saveNotes([]); fetchFeed();
+    });
+  }
 
-  clearAll.addEventListener('click', ()=>{
-    notes = []; saveNotes(notes); renderTicker(notes);
-  });
+  // Initial load + auto-refresh (every 60s)
+  fetchFeed();
+  setInterval(fetchFeed, 60000);
 })();
+
 
 /* ========= Departments Grid ========= */
 (function initGrid(){
