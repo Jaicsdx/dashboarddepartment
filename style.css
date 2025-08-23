@@ -1,6 +1,7 @@
 /* ======================
    Life City – Responsive CSS (mobile-first)
-   Adds: Hamburger toggle for off‑canvas sidebar
+   Update: Remove excessive gap between sidebar and main content.
+   Technique: Grid-first layout with explicit 0 gap; flex fallback.
    ====================== */
 
 :root{
@@ -41,14 +42,26 @@ body{
 }
 .minw-0{min-width:0}
 
-/* ---- Layout ---- */
+/* ======================
+   LAYOUT (Gapless Sidebar + Main)
+   ====================== */
 .layout{
+  /* Grid-first: two columns, no gap at all */
   display:grid;
-  grid-template-columns:260px 1fr;
+  grid-template-columns: minmax(240px, 260px) 1fr;
+  gap:0; column-gap:0; row-gap:0;
+  align-items: stretch;
   min-height:100vh;
 }
 @media (max-width: 880px){
   .layout{ grid-template-columns: 1fr; }
+}
+
+/* Flex fallback for older engines */
+@supports not (grid-template-columns: minmax(0,0) 1fr){
+  .layout{ display:flex; }
+  .sidebar{ flex: 0 0 260px; }
+  .main{ flex: 1 1 auto; min-width:0; }
 }
 
 /* ---- Sidebar ---- */
@@ -56,6 +69,8 @@ body{
   background:linear-gradient(180deg,var(--brand1),var(--brand2));
   padding:14px;
   padding-top: calc(14px + env(safe-area-inset-top));
+  /* When in grid, the sidebar occupies the first column with NO extra margin */
+  margin:0;
 }
 .brand{display:flex;align-items:center;gap:10px;padding:8px 10px}
 .brand-emoji{font-size:26px}
@@ -99,10 +114,10 @@ body{
 .menu-toggle::before{ top:12px; box-shadow:0 7px 0 #cbd5e1; } /* top + middle */
 .menu-toggle::after{ bottom:12px; }                           /* bottom line */
 
+/* Mobile/off-canvas behavior (only on small screens) */
 @media (max-width: 880px){
   .menu-toggle{ display:block; }
 
-  /* Off-canvas sidebar */
   .sidebar{
     position:fixed;
     top:0; left:-260px;
@@ -126,9 +141,17 @@ body{
 }
 
 /* ---- Main ---- */
-.main{background:#0c1326}
+.main{
+  background:#0c1326;
+  /* Ensure main can shrink and never pushes a gap */
+  min-width:0;
+  margin:0; /* explicit: no margin beside sidebar */
+}
 .container{
-  width:100%; max-width:1120px; margin:0 auto; padding:0 16px;
+  width:100%;
+  max-width:1120px;
+  margin:0 auto;
+  padding:0 16px;
 }
 
 /* ---- Header ---- */
