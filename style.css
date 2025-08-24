@@ -213,7 +213,7 @@ body{
 .ticker__viewport{
   height:100%; display:flex; align-items:center; gap:var(--gap);
   width:max-content; animation:marquee var(--speed) linear infinite;
-  animation-direction:normal; will-change:transform;
+  animation-direction:reverse; will-change:transform;
 }
 .ticker:hover .ticker__viewport{ animation-play-state: paused; }
 .ticker__item{ display:inline-flex; align-items:center; gap:10px; white-space:nowrap; font-weight:700; font-size:14px; }
@@ -221,7 +221,7 @@ body{
   width:8px;height:8px;border-radius:999px;background:var(--ticker-accent);
   box-shadow:0 0 0 2px rgba(255,255,255,.15) inset
 }
-@keyframes marquee{ from{transform:translateX(-50%)} to{transform:translateX(-50%)} }
+@keyframes marquee{ from{transform:translateX(-30%)} to{transform:translateX(-50%)} }
 @media (max-width:420px){ .ticker{ --height:36px; --gap:18px } .ticker__item{ font-size:13px } }
 
 /* ---- Content ---- */
