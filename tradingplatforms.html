@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trading Platforms — Quick Launcher</title>
+  <meta name="description" content="Big clickable boxes to open your trading platforms. Drop your images in /assets and update the links below." />
+  <style>
+    :root{
+      --bg: #0b0f14;
+      --card: #111723;
+      --text: #e7edf5;
+      --muted: #9fb1c9;
+      --ring: #3b82f6;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    @media (prefers-color-scheme: light){
+      :root{ --bg:#f6f8fb; --card:#ffffff; --text:#0b1320; --muted:#51627a; --ring:#2563eb; }
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 10% 0%, rgba(59,130,246,.08), transparent 60%),
+                  radial-gradient(1000px 700px at 90% 20%, rgba(16,185,129,.08), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      display:flex; flex-direction:column;
+      min-height:100dvh;
+    }
+    header{
+      position:sticky; top:0; z-index:10; backdrop-filter: blur(8px);
+      background: linear-gradient(to bottom, rgba(5,8,13,.7), rgba(5,8,13,.25) 60%, transparent);
+      padding: 20px clamp(16px, 3vw, 36px) 10px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .brand{ display:flex; align-items:center; gap:12px; }
+    .brand h1{ font-size: clamp(20px, 2.6vw, 34px); margin:0; letter-spacing:.3px }
+    .brand small{ color:var(--muted); font-size: .9rem; }
+
+    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin-top:12px }
+    .btn{
+      appearance:none; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.02);
+      color:var(--text); padding:10px 14px; border-radius:12px; cursor:pointer;
+      font-weight:600; transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.22) }
+    .btn:active{ transform: translateY(1px) }
+
+    main{ width:min(1200px, 92%); margin: 18px auto 40px; flex:1; }
+    .grid{
+      display:grid; gap:18px; 
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+
+    .card{
+      position:relative; overflow:hidden; border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow);
+      min-height: 180px;
+      display:block; text-decoration:none; color:inherit;
+      outline: none;
+    }
+    .card:focus-visible{ box-shadow: 0 0 0 3px var(--ring), var(--shadow); }
+    .thumb{ position:absolute; inset:0; background-size:cover; background-position:center; filter:saturate(1.1) contrast(1.02) brightness(.96); transition: transform .45s ease; }
+    .veil{ position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,.0) 20%, rgba(0,0,0,.55) 85%); opacity:.85; }
+    .content{ position:absolute; inset:auto 14px 14px 14px; display:flex; align-items:flex-end; gap:10px }
+    .logo{ width:42px; height:42px; border-radius:12px; background:#ffffff10; backdrop-filter: blur(4px); border:1px solid rgba(255,255,255,.2); display:grid; place-items:center; font-weight:800; }
+    .title{ font-size: clamp(18px, 2vw, 22px); margin:0; }
+    .tag{ display:inline-flex; align-items:center; gap:6px; font-size:.85rem; color:#d1e2ff; opacity:.95; }
+
+    .card:hover .thumb{ transform: scale(1.06) }
+
+    .empty{
+      border: 1.5px dashed rgba(255,255,255,.22); background: transparent; display:grid; place-items:center; min-height: 180px; border-radius: var(--radius);
+      color: var(--muted);
+    }
+
+    footer{ color:var(--muted); text-align:center; padding:24px 12px 36px }
+
+    /* Compact mode for very small screens */
+    @media (max-width: 380px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 10.5C3 6.91 6.134 4 10 4s7 2.91 7 6.5S13.866 17 10 17v3l-5-3.5V10.5Z" fill="currentColor" opacity=".75"/><path d="M14 7h7v10h-7" stroke="currentColor" stroke-width="1.5"/></svg>
+      <div>
+        <h1>Trading Platforms</h1>
+        <small>Tap a card to launch the platform in a new tab</small>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="btn-compact">Toggle compact</button>
+      <button class="btn" id="btn-open-all">Open all</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="grid" class="grid" aria-live="polite"></div>
+
+    <template id="card-template">
+      <a class="card" target="_blank" rel="noopener noreferrer">
+        <div class="thumb"></div>
+        <div class="veil" aria-hidden="true"></div>
+        <div class="content">
+          <div class="logo" aria-hidden="true">↗</div>
+          <div>
+            <h3 class="title"></h3>
+            <div class="tag"></div>
+          </div>
+        </div>
+      </a>
+    </template>
+
+    <div id="empty" class="empty" hidden>
+      Drop logos/screenshots in <code>/assets</code> of your repo and update the list below.
+    </div>
+  </main>
+
+  <footer>
+    Made for GitHub Pages. Edit the platforms list in the HTML file — no build tools needed.
+  </footer>
+
+  <script>
+    // 1) EDIT THIS LIST with your platforms (name, url, image path under /assets)
+    // Example image paths: "./assets/binance.jpg", "./assets/ibkr.png", "./assets/coinbase.webp"
+    const PLATFORMS = [
+      // { name: "Interactive Brokers", url: "https://www.interactivebrokers.com/", image: "./assets/ibkr.png", tag: "Broker" },
+      // { name: "Questrade", url: "https://www.questrade.com/", image: "./assets/questrade.jpg", tag: "Broker" },
+      // { name: "Binance", url: "https://www.binance.com/", image: "./assets/binance.jpg", tag: "Crypto" },
+      // { name: "TradingView", url: "https://www.tradingview.com/", image: "./assets/tradingview.jpg", tag: "Charts" },
+      // { name: "OANDA", url: "https://www.oanda.com/", image: "./assets/oanda.png", tag: "FX" },
+      // { name: "Kraken", url: "https://www.kraken.com/", image: "./assets/kraken.jpg", tag: "Crypto" },
+      // { name: "Wealthsimple Trade", url: "https://www.wealthsimple.com/en-ca/trade", image: "./assets/wealthsimple.png", tag: "Broker" },
+    ];
+
+    // 2) OPTIONAL: enable "compact" by default (smaller tiles)
+    let compact = false;
+
+    const grid = document.getElementById('grid');
+    const empty = document.getElementById('empty');
+    const tpl = document.getElementById('card-template');
+
+    function render(){
+      grid.innerHTML = '';
+      if(!PLATFORMS.length){ empty.hidden = false; return; }
+      empty.hidden = true;
+      PLATFORMS.forEach(p => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.href = p.url;
+        node.querySelector('.thumb').style.backgroundImage = `url(${p.image})`;
+        node.querySelector('.title').textContent = p.name;
+        node.querySelector('.tag').textContent = p.tag || new URL(p.url).hostname.replace('www.','');
+        if(compact) node.style.minHeight = '130px';
+        grid.appendChild(node);
+      });
+    }
+
+    document.getElementById('btn-compact').addEventListener('click',()=>{ compact=!compact; render(); });
+    document.getElementById('btn-open-all').addEventListener('click',()=>{
+      PLATFORMS.forEach(p=> window.open(p.url,'_blank','noopener'));
+    });
+
+    render();
+  </script>
+</body>
+</html>
