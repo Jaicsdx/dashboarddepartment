@@ -17,6 +17,10 @@
     .page-actions{display:flex;gap:8px;flex-wrap:wrap}
     .btn-outline{border:1px solid var(--border,rgba(255,255,255,.18));background:transparent}
     .prose{line-height:1.6}
+    .thumb{width:100%;height:100px;background-size:cover;background-position:center;border-radius:12px}
+    .title{font-weight:700;font-size:16px;margin-top:8px}
+    .tag{font-size:12px;color:var(--muted)}
+    .card-like{padding:14px;border:1px solid var(--panel-brd);border-radius:12px;background:var(--panel)}
   </style>
 </head>
 <body>
@@ -65,8 +69,8 @@
           </div>
 
           <div class="page-actions">
-            <button class="btn btn-outline">Share</button>
-            <button class="btn btn-sky">New</button>
+            <button class="btn btn-outline" id="btn-compact">Toggle Compact</button>
+            <button class="btn btn-sky" id="btn-open-all">Open All</button>
           </div>
         </div>
 
@@ -88,20 +92,18 @@
           </p>
         </div>
 
-        <section class="grid" id="subpage-grid">
-          <div class="card-like">
-            <h3>Section A</h3>
-            <p class="prose">Put key links, quick actions, or summaries here.</p>
-          </div>
-          <div class="card-like">
-            <h3>Section B</h3>
-            <p class="prose">Use as a hub for this department's docs.</p>
-          </div>
-          <div class="card-like">
-            <h3>Section C</h3>
-            <p class="prose">Add embeds (Sheets, OneDrive, GitHub Pages), or notes.</p>
-          </div>
-        </section>
+        <section class="grid" id="subpage-grid"></section>
+
+        <!-- Card template for platforms -->
+        <template id="card-template">
+          <a class="card-like" target="_blank" rel="noopener">
+            <div class="thumb"></div>
+            <div class="title"></div>
+            <div class="tag"></div>
+          </a>
+        </template>
+
+        <div id="empty" hidden>No platforms configured</div>
       </main>
 
       <footer class="container footer">Subpage template • © Life City</footer>
@@ -111,7 +113,7 @@
   <!-- Shared behavior -->
   <script src="script.js"></script>
   <script>
-    // Lightweight sidebar toggle that does not interfere with existing script.js
+    // Lightweight sidebar toggle
     (function(){
       const btn = document.getElementById('hamburger');
       const sidebar = document.getElementById('sidebar');
@@ -121,6 +123,40 @@
         btn.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
     })();
+
+    // Platforms grid similar to main example
+    const PLATFORMS = [
+      { name: "Questrade", url: "https://www.questrade.com/", image: "./assets/questrade.png", tag: "Broker" },
+      { name: "Zebpay", url: "https://www.zebpay.com/", image: "./assets/zebpay.png", tag: "Crypto" },
+      { name: "Zerodha", url: "https://kite.zerodha.com/", image: "./assets/zerodah.png", tag: "FX" }
+    ];
+    let compact = false;
+
+    const grid = document.getElementById('subpage-grid');
+    const empty = document.getElementById('empty');
+    const tpl = document.getElementById('card-template');
+
+    function render(){
+      grid.innerHTML = '';
+      if(!PLATFORMS.length){ empty.hidden = false; return; }
+      empty.hidden = true;
+      PLATFORMS.forEach(p => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.href = p.url;
+        node.querySelector('.thumb').style.backgroundImage = `url(${p.image})`;
+        node.querySelector('.title').textContent = p.name;
+        node.querySelector('.tag').textContent = p.tag || new URL(p.url).hostname.replace('www.','');
+        if(compact) node.style.minHeight = '130px';
+        grid.appendChild(node);
+      });
+    }
+
+    document.getElementById('btn-compact').addEventListener('click',()=>{ compact=!compact; render(); });
+    document.getElementById('btn-open-all').addEventListener('click',()=>{
+      PLATFORMS.forEach(p=> window.open(p.url,'_blank','noopener'));
+    });
+
+    render();
   </script>
 </body>
 </html>
