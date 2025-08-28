@@ -46,6 +46,7 @@ body{
    LAYOUT (Gapless Sidebar + Main)
    ====================== */
 .layout{
+  /* Grid-first: two columns, no gap at all */
   display:grid;
   grid-template-columns: minmax(240px, 260px) 1fr;
   gap:0; column-gap:0; row-gap:0;
@@ -56,7 +57,7 @@ body{
   .layout{ grid-template-columns: 1fr; }
 }
 
-/* Flex fallback */
+/* Flex fallback for older engines */
 @supports not (grid-template-columns: minmax(0,0) 1fr){
   .layout{ display:flex; }
   .sidebar{ flex: 0 0 260px; }
@@ -68,6 +69,7 @@ body{
   background:linear-gradient(180deg,var(--brand1),var(--brand2));
   padding:14px;
   padding-top: calc(14px + env(safe-area-inset-top));
+  /* When in grid, the sidebar occupies the first column with NO extra margin */
   margin:0;
 }
 .brand{display:flex;align-items:center;gap:10px;padding:8px 10px}
@@ -103,15 +105,16 @@ body{
   cursor:pointer;
   box-shadow:var(--shadow);
 }
+/* Draw the three lines */
 .menu-toggle::before,
 .menu-toggle::after{
   content:"";
   position:absolute; left:10px; right:10px; height:2px; background:#cbd5e1;
 }
-.menu-toggle::before{ top:12px; box-shadow:0 7px 0 #cbd5e1; }
-.menu-toggle::after{ bottom:12px; }
+.menu-toggle::before{ top:12px; box-shadow:0 7px 0 #cbd5e1; } /* top + middle */
+.menu-toggle::after{ bottom:12px; }                           /* bottom line */
 
-/* Mobile/off-canvas (≤880px) */
+/* Mobile/off-canvas behavior (only on small screens) */
 @media (max-width: 880px){
   .menu-toggle{ display:block; }
 
@@ -125,8 +128,10 @@ body{
   }
   body.sidebar-open .sidebar{ left:0; }
 
+  /* Prevent background scroll while menu is open */
   body.sidebar-open{ overflow:hidden; }
 
+  /* Dim background */
   body.sidebar-open::after{
     content:"";
     position:fixed; inset:0;
@@ -138,8 +143,9 @@ body{
 /* ---- Main ---- */
 .main{
   background:#0c1326;
+  /* Ensure main can shrink and never pushes a gap */
   min-width:0;
-  margin:0;
+  margin:0; /* explicit: no margin beside sidebar */
 }
 .container{
   width:100%;
@@ -159,7 +165,9 @@ body{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   padding:14px 0; flex-wrap:wrap; overflow:hidden;
 }
-.header-left{ display:flex;gap:12px;align-items:center;flex:1;min-width:0;flex-wrap:wrap; }
+.header-left{
+  display:flex;gap:12px;align-items:center;flex:1;min-width:0;flex-wrap:wrap;
+}
 .header-right{display:flex;gap:10px}
 
 /* ---- Inputs / Search ---- */
@@ -252,7 +260,7 @@ body{
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
 }
 
-/* ---- Compact iPhone tweaks ---- */
+/* ---- Compact tweaks for narrow iPhones ---- */
 @media (max-width:390px){
   .brand-emoji{ font-size:22px }
   .brand-name{ font-size:16px }
