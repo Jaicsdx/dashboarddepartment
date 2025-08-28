@@ -42,11 +42,10 @@ const normalize = s => s.trim().toLowerCase();
 function loadFavs(){ try{ return new Set(JSON.parse(localStorage.getItem('favorites')||'[]')); }catch{ return new Set(); } }
 function saveFavs(set){ localStorage.setItem('favorites', JSON.stringify([...set])); }
 
-/* ========= Ticker (note input only) ========= */
 /* ========= Ticker (JSON-powered with fallbacks) ========= */
 (function initTicker(){
-  const FEED_URL = 'feed.json';                 // same folder as index.html
-  const STORAGE_KEY = "lifeCity.tickerNotes";   // local manual notes fallback
+  const FEED_URL = 'feed.json';
+  const STORAGE_KEY = "lifeCity.tickerNotes";
   const track = document.getElementById('ticker-track');
   const addBtn = document.getElementById('addNoteBtn');
   const textarea = document.getElementById('newNote');
@@ -56,15 +55,12 @@ function saveFavs(set){ localStorage.setItem('favorites', JSON.stringify([...set
     {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
   ));
 
-  // Local notes (fallback + manual add)
   const loadNotes = () => { try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]"); }catch{return[]} };
   const saveNotes = (arr) => localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
 
   function renderTickerItems(items){
     if (!track) return;
     track.innerHTML = '';
-
-    // Build a fragment from feed items
     const build = (arr) => {
       const frag = document.createDocumentFragment();
       arr.forEach(item=>{
@@ -79,8 +75,6 @@ function saveFavs(set){ localStorage.setItem('favorites', JSON.stringify([...set
       });
       return frag;
     };
-
-    // Duplicate so the marquee can loop seamlessly
     track.appendChild(build(items));
     track.appendChild(build(items));
   }
@@ -91,55 +85,34 @@ function saveFavs(set){ localStorage.setItem('favorites', JSON.stringify([...set
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (!data || !Array.isArray(data.items)) throw new Error('Bad JSON shape');
-
-      // Merge JSON feed with any local notes (optional). Comment next line to disable merge:
       const merged = [...data.items, ...loadNotes().map(t => ({ text: t }))];
-
-      // If JSON is empty and no notes, use safe defaults
-      const items = merged.length ? merged : [
-        { text: "Welcome to Life City", emoji:"🏙️" },
-        { text: "Add notes → they appear here", emoji:"➕" }
-      ];
-      renderTickerItems(items);
-    }catch(err){
-      // Fallback to local notes
+      renderTickerItems(merged.length ? merged : [{ text: "Welcome to Life City", emoji:"🏙️" }]);
+    }catch{
       const notes = loadNotes();
-      const items = notes.length ? notes.map(t => ({ text: t })) : [
-        { text: "Ticker feed.json not found; using fallback", emoji:"ℹ️" },
-        { text: "Add notes to populate ticker", emoji:"📝" }
-      ];
+      const items = notes.length ? notes.map(t => ({ text: t })) : [{ text: "Add notes to populate ticker", emoji:"📝" }];
       renderTickerItems(items);
-      // console.warn('Ticker feed error:', err);
     }
   }
 
-  // Manual add / clear (still supported)
   if (addBtn && textarea){
     addBtn.addEventListener('click', ()=>{
       const txt = (textarea.value||'').trim();
       if(!txt) return;
       const notes = loadNotes(); notes.push(txt); saveNotes(notes);
-      textarea.value = ''; fetchFeed(); // re-render with merged set
+      textarea.value = ''; fetchFeed();
     });
   }
   if (clearAll){
-    clearAll.addEventListener('click', ()=>{
-      saveNotes([]); fetchFeed();
-    });
+    clearAll.addEventListener('click', ()=>{ localStorage.removeItem(STORAGE_KEY); fetchFeed(); });
   }
 
-  // Initial load + auto-refresh (every 60s)
-  fetchFeed();
-  setInterval(fetchFeed, 60000);
+  fetchFeed(); setInterval(fetchFeed, 60000);
 })();
 
-
-/* ========= Departments Grid ========= */
-(function initGrid(){
-  const grid = $('#grid');
-  const search = $('#search');
-  const sortSel = $('#sort');
-  const globalSearch = $('#globalSearch');
+/* ========= Home: Departments Grid ========= */
+(function initHomeGrid(){
+  const grid = $('#grid'); if(!grid) return;
+  const search = $('#search'); const sortSel = $('#sort'); const globalSearch = $('#globalSearch');
 
   function render(list){
     const favs = loadFavs();
@@ -187,30 +160,51 @@ function saveFavs(set){ localStorage.setItem('favorites', JSON.stringify([...set
         </div>`;
       card.querySelector('.icon-slot').replaceWith(iconWrap);
       card.querySelector('.card-top').appendChild(star);
-
       grid.appendChild(card);
     });
   }
 
   function getFilteredSorted(){
-    const q = normalize(search.value || '');
+    const q = normalize((($('#search')||{}).value)||'');
     let list = DEPARTMENTS.filter(d => d.name.toLowerCase().includes(q));
-    if (sortSel.value === 'alpha'){
-      list = [...list].sort((a,b)=>a.name.localeCompare(b.name));
-    } // else keep natural number order by defined array sequence
+    if ((($('#sort')||{}).value) === 'alpha'){ list = [...list].sort((a,b)=>a.name.localeCompare(b.name)); }
     return list;
   }
 
-  search.addEventListener('input', ()=>render(getFilteredSorted()));
-  sortSel.addEventListener('change', ()=>render(getFilteredSorted()));
-  globalSearch.addEventListener('input', e => { search.value = e.target.value; render(getFilteredSorted()); });
+  search && search.addEventListener('input', ()=>render(getFilteredSorted()));
+  sortSel && sortSel.addEventListener('change', ()=>render(getFilteredSorted()));
+  globalSearch && globalSearch.addEventListener('input', e => { if(search){ search.value = e.target.value; render(getFilteredSorted()); } });
 
   render(DEPARTMENTS);
 })();
 
+/* ========= Subpage: Optional Launcher Grid ========= */
+(function initSubpageLauncher(){
+  const grid = document.getElementById('subpage-grid'); if(!grid) return;
+  const tpl = document.getElementById('card-template');
+  const empty = document.getElementById('empty');
+
+  const PLATFORMS = (window.PLATFORMS || []);
+  function render(){
+    grid.innerHTML = '';
+    if(!PLATFORMS.length){ if(empty) empty.hidden = false; return; }
+    if(empty) empty.hidden = true;
+
+    PLATFORMS.forEach(p=>{
+      const node = tpl.content.firstElementChild.cloneNode(true);
+      node.href = p.url;
+      node.querySelector('.thumb').style.backgroundImage = `url(${p.image})`;
+      node.querySelector('.card-name').textContent = p.name;
+      node.querySelector('.card-meta').textContent = p.tag || new URL(p.url).hostname.replace('www.','');
+      grid.appendChild(node);
+    });
+  }
+  render();
+})();
+
 /* ========= Sidebar Toggle (hamburger) ========= */
 (function initSidebarToggle(){
-  // Create the button if it's not in the HTML yet
+  // Inject a consistent hamburger across pages
   let btn = document.getElementById('menuToggle');
   if (!btn) {
     btn = document.createElement('button');
@@ -224,14 +218,6 @@ function saveFavs(set){ localStorage.setItem('favorites', JSON.stringify([...set
     const open = document.body.classList.toggle('sidebar-open');
     btn.setAttribute('aria-expanded', String(open));
   });
-
-  // Close when tapping the dimmed backdrop
-  document.addEventListener('click', (e)=>{
-    if (document.body.classList.contains('sidebar-open') && e.target === document.body){
-      document.body.classList.remove('sidebar-open');
-      btn.setAttribute('aria-expanded', 'false');
-    }
-  }, {passive:true});
 
   // Close on ESC
   document.addEventListener('keydown', (e)=>{
