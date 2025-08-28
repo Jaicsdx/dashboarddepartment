@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Life City – Subpage Template</title>
+  <!-- Reuse the same shared styles and scripts as the main dashboard -->
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* Minimal extras for this template only */
+    .subpage-headerbar{display:flex;align-items:center;gap:10px}
+    .hamburger{display:inline-flex;flex-direction:column;gap:4px;padding:10px;border:1px solid var(--border,rgba(255,255,255,.15));border-radius:10px;background:transparent;cursor:pointer}
+    .hamburger span{width:22px;height:2px;background:currentColor;border-radius:2px}
+    @media (min-width: 980px){ .hamburger{display:none} }
+    .breadcrumb{color:var(--muted,#6b7280);font-size:.95rem}
+    .page-title{font-size:clamp(20px,2.2vw,28px);font-weight:700;margin:.2rem 0}
+    .page-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn-outline{border:1px solid var(--border,rgba(255,255,255,.18));background:transparent}
+    .prose{line-height:1.6}
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar (same structure as index.html) -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-emoji">🏙️</div>
+        <div class="brand-name">Dashboard</div>
+      </div>
+
+      <div class="panel panel--ghost">
+        <div class="panel-title">Finance & Tracking</div>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1zOiW_1e00csF1FHKZX6h_DaVxrLKe3unuHLZwWRUJNw/edit?gid=401075469#gid=401075469">📊 Tracker</a>
+        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/checkboxmenu/">📊 Quick Tracker Entry</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1eWBZQZsQap3BABUNPdKvvd6HzAnC3RZvrd1N6jPQGsY/edit?gid=211823180#gid=211823180">💰 Payments Forecast</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1Aj38AwzHZIHP0zVye9Z0HE9BXxiMa1DSO8OoUWCX8Kg/edit?gid=17854660#gid=17854660">🏦 Fixed Deposit</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1knQ5kQx8u_GlhtjgFVDHjNIOYA6bKM6K3v61eG1Sy3I/edit?gid=0#gid=0">🏠 Mortgage</a>
+        <a target="_blank" rel="noopener" href="https://calendar.google.com/calendar/u/0/r">📅 Calendar</a>
+        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/incomepersecond/">📐 Income per second</a>
+        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/localmedia-player/">📺 Personal Media Player</a>
+        <a> FINANCE </a>
+        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/dashboarddepartment/tradingplatforms">💰 TRADING PLATFORMS</a>
+      </div>
+
+      <div class="panel panel--ghost">
+        <div class="panel-title">Navigation</div>
+        <a href="index.html">🏠 Home</a>
+        <a href="#settings">⚙️ Settings</a>
+        <a href="#support">🆘 Support</a>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="main">
+      <!-- Top header with search + ticker like the main page -->
+      <header class="header" id="top">
+        <div class="container header-bar subpage-headerbar">
+          <button class="hamburger" id="hamburger" aria-label="Toggle sidebar" aria-controls="sidebar" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+
+          <div class="searchbar" style="flex:1">
+            <span class="search-emoji">🔎</span>
+            <input class="input search" id="globalSearch" placeholder="Search Life City…"/>
+          </div>
+
+          <div class="page-actions">
+            <button class="btn btn-outline">Share</button>
+            <button class="btn btn-sky">New</button>
+          </div>
+        </div>
+
+        <!-- Headlines / ticker region (script.js will populate if it targets #ticker-track) -->
+        <div class="ticker" role="region" aria-label="Highlights">
+          <div class="ticker__mask"></div>
+          <div class="ticker__viewport" id="ticker-track" aria-live="polite"></div>
+        </div>
+      </header>
+
+      <!-- Page body -->
+      <main class="container content">
+        <nav class="breadcrumb">Home / <strong>Subpage Template</strong></nav>
+        <h1 class="page-title">Subpage Title</h1>
+
+        <div class="panel">
+          <p class="prose">
+            This is a reusable subpage template. Duplicate this file for new sections (e.g., <em>Housing</em>, <em>Security</em>, <em>Finance</em>), update the <strong>page title</strong>, breadcrumb, and fill the content blocks below.
+          </p>
+        </div>
+
+        <section class="grid" id="subpage-grid">
+          <div class="card-like">
+            <h3>Section A</h3>
+            <p class="prose">Put key links, quick actions, or summaries here.</p>
+          </div>
+          <div class="card-like">
+            <h3>Section B</h3>
+            <p class="prose">Use as a hub for this department's docs.</p>
+          </div>
+          <div class="card-like">
+            <h3>Section C</h3>
+            <p class="prose">Add embeds (Sheets, OneDrive, GitHub Pages), or notes.</p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="container footer">Subpage template • © Life City</footer>
+    </div>
+  </div>
+
+  <!-- Shared behavior -->
+  <script src="script.js"></script>
+  <script>
+    // Lightweight sidebar toggle that does not interfere with existing script.js
+    (function(){
+      const btn = document.getElementById('hamburger');
+      const sidebar = document.getElementById('sidebar');
+      if(!btn || !sidebar) return;
+      btn.addEventListener('click', ()=>{
+        const open = sidebar.classList.toggle('sidebar--open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+</body>
+</html>
