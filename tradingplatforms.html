@@ -1,148 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trading Platforms — Quick Launcher</title>
-  <meta name="description" content="Big clickable boxes to open your trading platforms. Drop your images in /assets and update the links below." />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Life City – Subpage Template</title>
+  <!-- Reuse the same shared styles and scripts as the main dashboard -->
+  <link rel="stylesheet" href="style.css"/>
   <style>
-    :root{
-      --bg: #0b0f14;
-      --card: #111723;
-      --text: #e7edf5;
-      --muted: #9fb1c9;
-      --ring: #3b82f6;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 18px;
+    /* Minimal extras for this template only */
+    .subpage-headerbar{display:flex;align-items:center;gap:10px}
+    .hamburger{display:inline-flex;flex-direction:column;gap:4px;padding:10px;border:1px solid var(--border,rgba(255,255,255,.15));border-radius:10px;background:transparent;cursor:pointer}
+    .hamburger span{width:22px;height:2px;background:currentColor;border-radius:2px}
+    @media (min-width: 980px){ .hamburger{display:none} }
+    .sidebar{transition:transform .3s ease-in-out}
+    @media (max-width: 980px){
+      .sidebar{position:fixed;top:0;left:0;bottom:0;width:240px;transform:translateX(-100%);z-index:50}
+      .sidebar.sidebar--open{transform:translateX(0)}
+      body.sidebar-open{overflow:hidden}
     }
-    @media (prefers-color-scheme: light){
-      :root{ --bg:#f6f8fb; --card:#ffffff; --text:#0b1320; --muted:#51627a; --ring:#2563eb; }
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 800px at 10% 0%, rgba(59,130,246,.08), transparent 60%),
-                  radial-gradient(1000px 700px at 90% 20%, rgba(16,185,129,.08), transparent 60%),
-                  var(--bg);
-      color:var(--text);
-      display:flex; flex-direction:column;
-      min-height:100dvh;
-    }
-    header{
-      position:sticky; top:0; z-index:10; backdrop-filter: blur(8px);
-      background: linear-gradient(to bottom, rgba(5,8,13,.7), rgba(5,8,13,.25) 60%, transparent);
-      padding: 20px clamp(16px, 3vw, 36px) 10px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-    }
-    .brand{ display:flex; align-items:center; gap:12px; }
-    .brand h1{ font-size: clamp(20px, 2.6vw, 34px); margin:0; letter-spacing:.3px }
-    .brand small{ color:var(--muted); font-size: .9rem; }
-
-    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin-top:12px }
-    .btn{
-      appearance:none; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.02);
-      color:var(--text); padding:10px 14px; border-radius:12px; cursor:pointer;
-      font-weight:600; transition: transform .08s ease, background .2s ease, border-color .2s ease;
-    }
-    .btn:hover{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.22) }
-    .btn:active{ transform: translateY(1px) }
-
-    main{ width:min(1200px, 92%); margin: 18px auto 40px; flex:1; }
-    .grid{
-      display:grid; gap:18px; 
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    }
-
-    .card{
-      position:relative; overflow:hidden; border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow: var(--shadow);
-      min-height: 180px;
-      display:block; text-decoration:none; color:inherit;
-      outline: none;
-    }
-    .card:focus-visible{ box-shadow: 0 0 0 3px var(--ring), var(--shadow); }
-    .thumb{ position:absolute; inset:0; background-size:cover; background-position:center; filter:saturate(1.1) contrast(1.02) brightness(.96); transition: transform .45s ease; }
-    .veil{ position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,.0) 20%, rgba(0,0,0,.55) 85%); opacity:.85; }
-    .content{ position:absolute; inset:auto 14px 14px 14px; display:flex; align-items:flex-end; gap:10px }
-    .logo{ width:42px; height:42px; border-radius:12px; background:#ffffff10; backdrop-filter: blur(4px); border:1px solid rgba(255,255,255,.2); display:grid; place-items:center; font-weight:800; }
-    .title{ font-size: clamp(18px, 2vw, 22px); margin:0; }
-    .tag{ display:inline-flex; align-items:center; gap:6px; font-size:.85rem; color:#d1e2ff; opacity:.95; }
-
-    .card:hover .thumb{ transform: scale(1.06) }
-
-    .empty{
-      border: 1.5px dashed rgba(255,255,255,.22); background: transparent; display:grid; place-items:center; min-height: 180px; border-radius: var(--radius);
-      color: var(--muted);
-    }
-
-    footer{ color:var(--muted); text-align:center; padding:24px 12px 36px }
-
-    /* Compact mode for very small screens */
-    @media (max-width: 380px){
-      .grid{ grid-template-columns: 1fr; }
-    }
+    .breadcrumb{color:var(--muted,#6b7280);font-size:.95rem}
+    .page-title{font-size:clamp(20px,2.2vw,28px);font-weight:700;margin:.2rem 0}
+    .page-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn-outline{border:1px solid var(--border,rgba(255,255,255,.18));background:transparent}
+    .prose{line-height:1.6}
+    .thumb{width:100%;aspect-ratio:1/1;background-size:cover;background-position:center;border-radius:12px}
+    .title{font-weight:700;font-size:16px;margin-top:8px}
+    .tag{font-size:12px;color:var(--muted)}
+    .card-like{padding:14px;border:1px solid var(--panel-brd);border-radius:12px;background:var(--panel);display:flex;flex-direction:column;align-items:flex-start}
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 10.5C3 6.91 6.134 4 10 4s7 2.91 7 6.5S13.866 17 10 17v3l-5-3.5V10.5Z" fill="currentColor" opacity=".75"/><path d="M14 7h7v10h-7" stroke="currentColor" stroke-width="1.5"/></svg>
-      <div>
-        <h1>Trading Platforms</h1>
-        <small>Tap a card to launch the platform in a new tab</small>
+  <div class="layout">
+    <!-- Sidebar (same structure as index.html) -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-emoji">🏙️</div>
+        <div class="brand-name">Dashboard</div>
       </div>
-    </div>
-    <div class="toolbar">
-      <button class="btn" id="btn-compact">Toggle compact</button>
-      <button class="btn" id="btn-open-all">Open all</button>
-    </div>
-  </header>
 
-  <main>
-    <div id="grid" class="grid" aria-live="polite"></div>
+      <div class="panel panel--ghost">
+        <div class="panel-title">Finance & Tracking</div>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1zOiW_1e00csF1FHKZX6h_DaVxrLKe3unuHLZwWRUJNw/edit?gid=401075469#gid=401075469">📊 Tracker</a>
+        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/checkboxmenu/">📊 Quick Tracker Entry</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1eWBZQZsQap3BABUNPdKvvd6HzAnC3RZvrd1N6jPQGsY/edit?gid=211823180#gid=211823180">💰 Payments Forecast</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1Aj38AwzHZIHP0zVye9Z0HE9BXxiMa1DSO8OoUWCX8Kg/edit?gid=17854660#gid=17854660">🏦 Fixed Deposit</a>
+        <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1knQ5kQx8u_GlhtjgFVDHjNIOYA6bKM6K3v61eG1Sy3I/edit?gid=0#gid=0">🏠 Mortgage</a>
+        <a target="_blank" rel="noopener" href="https://calendar.google.com/calendar/u/0/r">📅 Calendar</a>
+        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/incomepersecond/">📐 Income per second</a>
+        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/localmedia-player/">📺 Personal Media Player</a>
+        <a> FINANCE </a>
+        <a target="_blank" rel="noopener" href="https://jaicsdx.github.io/dashboarddepartment/tradingplatforms">💰 TRADING PLATFORMS</a>
+      </div>
 
-    <template id="card-template">
-      <a class="card" target="_blank" rel="noopener noreferrer">
-        <div class="thumb"></div>
-        <div class="veil" aria-hidden="true"></div>
-        <div class="content">
-          <div class="logo" aria-hidden="true">↗</div>
-          <div>
-            <h3 class="title"></h3>
-            <div class="tag"></div>
+      <div class="panel panel--ghost">
+        <div class="panel-title">Navigation</div>
+        <a href="index.html">🏠 Home</a>
+        <a href="#settings">⚙️ Settings</a>
+        <a href="#support">🆘 Support</a>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="main">
+      <!-- Top header with search + ticker like the main page -->
+      <header class="header" id="top">
+        <div class="container header-bar subpage-headerbar">
+          <button class="hamburger" id="hamburger" aria-label="Toggle sidebar" aria-controls="sidebar" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+
+          <div class="searchbar" style="flex:1">
+            <span class="search-emoji">🔎</span>
+            <input class="input search" id="globalSearch" placeholder="Search Life City…"/>
+          </div>
+
+          <div class="page-actions">
+            <button class="btn btn-outline" id="btn-compact">Toggle Compact</button>
+            <button class="btn btn-sky" id="btn-open-all">Open All</button>
           </div>
         </div>
-      </a>
-    </template>
 
-    <div id="empty" class="empty" hidden>
-      
+        <!-- Headlines / ticker region (script.js will populate if it targets #ticker-track) -->
+        <div class="ticker" role="region" aria-label="Highlights">
+          <div class="ticker__mask"></div>
+          <div class="ticker__viewport" id="ticker-track" aria-live="polite"></div>
+        </div>
+      </header>
+
+      <!-- Page body -->
+      <main class="container content">
+        <nav class="breadcrumb">Home / <strong>Subpage Template</strong></nav>
+        <h1 class="page-title">Subpage Title</h1>
+
+        <div class="panel">
+          <p class="prose">
+            This is a reusable subpage template. Duplicate this file for new sections (e.g., <em>Housing</em>, <em>Security</em>, <em>Finance</em>), update the <strong>page title</strong>, breadcrumb, and fill the content blocks below.
+          </p>
+        </div>
+
+        <section class="grid" id="subpage-grid"></section>
+
+        <!-- Card template for platforms -->
+        <template id="card-template">
+          <a class="card-like" target="_blank" rel="noopener">
+            <div class="thumb"></div>
+            <div class="title"></div>
+            <div class="tag"></div>
+          </a>
+        </template>
+
+        <div id="empty" hidden>No platforms configured</div>
+      </main>
+
+      <footer class="container footer">Subpage template • © Life City</footer>
     </div>
-  </main>
+  </div>
 
-  <footer>
-    
-
+  <!-- Shared behavior -->
+  <script src="script.js"></script>
   <script>
-    // 1) EDIT THIS LIST with your platforms (name, url, image path under /assets)
-    // Example image paths: "./assets/binance.jpg", "./assets/ibkr.png", "./assets/coinbase.webp"
-    const PLATFORMS = [
-      // { name: "Interactive Brokers", url: "https://www.interactivebrokers.com/", image: "./assets/ibkr.png", tag: "Broker" },
-       { name: "Questrade", url: "https://www.questrade.com/", image: "./assets/questrade.png", tag: "Broker" },
-       { name: "Zebpay", url: "https://www.zebpay.com/", image: "./assets/zebpay.png", tag: "Crypto" },
-      // { name: "TradingView", url: "https://www.tradingview.com/", image: "./assets/tradingview.jpg", tag: "Charts" },
-       { name: "zerodah", url: "https://kite.zerodha.com/", image: "./assets/zerodah.png", tag: "FX" },
-      // { name: "Kraken", url: "https://www.kraken.com/", image: "./assets/kraken.jpg", tag: "Crypto" },
-      // { name: "Wealthsimple Trade", url: "https://www.wealthsimple.com/en-ca/trade", image: "./assets/wealthsimple.png", tag: "Broker" },
-    ];
+    // Sidebar toggle for mobile
+    (function(){
+      const btn = document.getElementById('hamburger');
+      const sidebar = document.getElementById('sidebar');
+      if(!btn || !sidebar) return;
+      btn.addEventListener('click', ()=>{
+        const isOpen = sidebar.classList.toggle('sidebar--open');
+        document.body.classList.toggle('sidebar-open', isOpen);
+        btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+    })();
 
-    // 2) OPTIONAL: enable "compact" by default (smaller tiles)
+    // Platforms grid similar to main example
+    const PLATFORMS = [
+      { name: "Questrade", url: "https://www.questrade.com/", image: "./assets/questrade.png", tag: "Broker" },
+      { name: "Zebpay", url: "https://www.zebpay.com/", image: "./assets/zebpay.png", tag: "Crypto" },
+      { name: "Zerodha", url: "https://kite.zerodha.com/", image: "./assets/zerodah.png", tag: "FX" }
+    ];
     let compact = false;
 
-    const grid = document.getElementById('grid');
+    const grid = document.getElementById('subpage-grid');
     const empty = document.getElementById('empty');
     const tpl = document.getElementById('card-template');
 
