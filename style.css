@@ -244,7 +244,7 @@ body{
 }
 .card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.45)}
 .card-top{display:flex;gap:14px;align-items:center;position:relative;min-width:0}
-.icon-badge{ width:56px;height:56px;border-radius:16px;display:grid;place-items:center;flex:0 0 56px; }
+.icon-badge{ width:32px;height:32px;border-radius:16px;display:grid;place-items:center;flex:0 0 56px; }
 .icon-badge img{width:32px;height:32px;filter:brightness(10)}
 .star{position:absolute;right:4px;top:4px;font-size:18px;color:#64748b}
 .star.active{color:#f59e0b}
